@@ -14,6 +14,7 @@ export class Register {
   readonly form: FormGroup;
   readonly loading = signal(false);
   readonly error = signal('');
+  readonly showPassword = signal(false);
 
   constructor(
     private fb: FormBuilder,
