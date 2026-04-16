@@ -3,9 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { AuthResponse, User } from '../../shared/models/user.model';
+import { environment } from '../../../environments/environment';
 
 const TOKEN_KEY = 'micarta_token';
-const API = 'http://localhost:3000/api';
+const API = environment.apiUrl;
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
