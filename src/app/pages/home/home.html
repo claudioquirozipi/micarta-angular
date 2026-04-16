@@ -1,0 +1,47 @@
+<div class="page">
+
+  <!-- Header -->
+  <header class="header">
+    <span class="logo">Mi<span class="logo__accent">Carta</span></span>
+    <nav class="nav">
+      <a routerLink="/login" class="nav__link">Ingresar</a>
+      <a routerLink="/register" class="nav__btn">Comenzar gratis</a>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <main class="main">
+    <div class="hero">
+      <span class="hero__badge">14 días gratis · Sin tarjeta de crédito</span>
+      <h1 class="hero__title">
+        La carta digital con QR<br />
+        <span class="hero__title--accent">para tu restaurante</span>
+      </h1>
+      <p class="hero__desc">
+        Crea tu menú digital en minutos, genera un código QR y ponlo en tus mesas.
+        Tus clientes escanean y ven tu carta al instante. Solo S/ 50 al mes.
+      </p>
+      <div class="hero__actions">
+        <a routerLink="/register" class="btn btn--primary">Crear mi carta gratis</a>
+        <a routerLink="/login" class="btn btn--outline">Ya tengo cuenta</a>
+      </div>
+    </div>
+
+    <!-- Cards -->
+    <div class="cards">
+      @for (step of steps; track step.title) {
+        <div class="card">
+          <div class="card__icon">{{ step.icon }}</div>
+          <h3 class="card__title">{{ step.title }}</h3>
+          <p class="card__desc">{{ step.desc }}</p>
+        </div>
+      }
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    © {{ currentYear }} MiCarta · Menú digital para restaurantes peruanos
+  </footer>
+
+</div>
