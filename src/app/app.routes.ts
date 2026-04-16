@@ -21,7 +21,50 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     canActivate: [authGuard],
-    loadComponent: () => import('./shared/pages/home/home').then(m => m.Home), // placeholder
+    loadComponent: () =>
+      import('./dashboard/dashboard-layout/dashboard-layout').then(m => m.DashboardLayout),
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./dashboard/home/dashboard-home').then(m => m.DashboardHome),
+      },
+      {
+        path: 'perfil',
+        loadComponent: () =>
+          import('./dashboard/home/dashboard-home').then(m => m.DashboardHome), // placeholder
+      },
+      {
+        path: 'menu',
+        loadComponent: () =>
+          import('./dashboard/home/dashboard-home').then(m => m.DashboardHome), // placeholder
+      },
+      {
+        path: 'ordenes',
+        loadComponent: () =>
+          import('./dashboard/home/dashboard-home').then(m => m.DashboardHome), // placeholder
+      },
+      {
+        path: 'equipo',
+        loadComponent: () =>
+          import('./dashboard/home/dashboard-home').then(m => m.DashboardHome), // placeholder
+      },
+      {
+        path: 'preview',
+        loadComponent: () =>
+          import('./dashboard/home/dashboard-home').then(m => m.DashboardHome), // placeholder
+      },
+      {
+        path: 'qr',
+        loadComponent: () =>
+          import('./dashboard/home/dashboard-home').then(m => m.DashboardHome), // placeholder
+      },
+      {
+        path: 'suscripcion',
+        loadComponent: () =>
+          import('./dashboard/home/dashboard-home').then(m => m.DashboardHome), // placeholder
+      },
+    ],
   },
   {
     path: '**',

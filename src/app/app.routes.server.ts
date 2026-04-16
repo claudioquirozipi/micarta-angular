@@ -2,7 +2,7 @@ import { RenderMode, ServerRoute } from '@angular/ssr';
 
 export const serverRoutes: ServerRoute[] = [
   {
-    path: '',                // landing page → CSR (no necesita SEO dinámico)
+    path: '',                // landing page → CSR
     renderMode: RenderMode.Client,
   },
   {
@@ -18,7 +18,15 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client,
   },
   {
-    path: '**',              // resto de rutas → SSR
+    path: 'dashboard',       // requiere auth → solo cliente
+    renderMode: RenderMode.Client,
+  },
+  {
+    path: 'dashboard/**',    // subrutas del dashboard → solo cliente
+    renderMode: RenderMode.Client,
+  },
+  {
+    path: '**',
     renderMode: RenderMode.Server,
   },
 ];

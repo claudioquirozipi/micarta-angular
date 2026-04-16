@@ -1,0 +1,84 @@
+<!-- ── Desktop sidebar ── -->
+<aside class="sidebar sidebar--desktop">
+  <div class="sidebar__brand">
+    <a routerLink="/dashboard" class="brand">Mi<span>Carta</span></a>
+  </div>
+
+  <nav class="sidebar__nav">
+    @for (item of navItems; track item.path) {
+      <a
+        [routerLink]="item.path"
+        routerLinkActive="sidebar__link--active"
+        class="sidebar__link"
+      >
+        <span class="material-symbols-outlined sidebar__icon">{{ item.icon }}</span>
+        {{ item.label }}
+      </a>
+    }
+  </nav>
+
+  <div class="sidebar__footer">
+    <button class="sidebar__logout" (click)="logout()">
+      <span class="material-symbols-outlined sidebar__icon">logout</span>
+      Cerrar sesión
+    </button>
+  </div>
+</aside>
+
+<!-- ── Mobile header ── -->
+<div class="mobile-header">
+  <button class="mobile-header__burger" (click)="openDrawer()" aria-label="Abrir menú">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <line x1="3" y1="6" x2="21" y2="6"/>
+      <line x1="3" y1="12" x2="21" y2="12"/>
+      <line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+  </button>
+  <a routerLink="/dashboard" class="brand">Mi<span>Carta</span></a>
+</div>
+
+<!-- ── Mobile overlay ── -->
+@if (drawerOpen()) {
+  <div class="drawer-overlay" (click)="closeDrawer()"></div>
+}
+
+<!-- ── Mobile drawer ── -->
+<aside class="sidebar sidebar--drawer" [class.sidebar--drawer-open]="drawerOpen()">
+  <div class="sidebar__brand">
+    <a routerLink="/dashboard" class="brand" (click)="closeDrawer()">Mi<span>Carta</span></a>
+    <button class="sidebar__close" (click)="closeDrawer()" aria-label="Cerrar menú">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  <nav class="sidebar__nav">
+    @for (item of navItems; track item.path) {
+      <a
+        [routerLink]="item.path"
+        routerLinkActive="sidebar__link--active"
+        class="sidebar__link"
+        (click)="closeDrawer()"
+      >
+        <span class="material-symbols-outlined sidebar__icon">{{ item.icon }}</span>
+        {{ item.label }}
+      </a>
+    }
+  </nav>
+
+  <div class="sidebar__footer">
+    <button class="sidebar__logout" (click)="logout()">
+      <span class="material-symbols-outlined sidebar__icon">logout</span>
+      Cerrar sesión
+    </button>
+  </div>
+</aside>
+
+<!-- ── Main content ── -->
+<div class="dashboard-content">
+  <main class="dashboard-main">
+    <router-outlet />
+  </main>
+</div>

@@ -1,0 +1,206 @@
+$sidebar-width: 15rem;
+$sidebar-bg: var(--color-secondary);
+$mobile-header-height: 3.5rem;
+
+// ── Layout wrapper ─────────────────────────────────────
+:host {
+  display: flex;
+  min-height: 100vh;
+  background: var(--color-background);
+}
+
+// ── Brand ──────────────────────────────────────────────
+.brand {
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: #fff;
+
+  span { color: var(--color-primary); }
+}
+
+// ── Shared sidebar styles ──────────────────────────────
+.sidebar {
+  width: $sidebar-width;
+  background: $sidebar-bg;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 1.25rem 1.25rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(255,255,255,0.6);
+    padding: 0.25rem;
+    border-radius: 0.375rem;
+    display: flex;
+
+    &:hover { color: #fff; background: rgba(255,255,255,0.08); }
+  }
+
+  &__nav {
+    flex: 1;
+    padding: 0.75rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    border-radius: 0.625rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.65);
+    transition: background 0.15s, color 0.15s;
+
+    &:hover {
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+    }
+
+    &--active {
+      background: var(--color-primary);
+      color: #fff;
+
+      &:hover { background: var(--color-primary-hover); }
+    }
+  }
+
+  &__icon {
+    font-size: 1.125rem;
+    font-variation-settings: 'FILL' 0, 'wght' 400;
+    flex-shrink: 0;
+  }
+
+  &__footer {
+    padding: 0.75rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  &__logout {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    border-radius: 0.625rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.55);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+
+    &:hover {
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+    }
+  }
+
+  // Desktop: visible por defecto
+  &--desktop {
+    display: none;
+
+    @media (min-width: 1024px) {
+      display: flex;
+      min-height: 100vh;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+  }
+
+  // Mobile: drawer deslizable
+  &--drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 50;
+    height: 100%;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+
+    @media (min-width: 1024px) {
+      display: none;
+    }
+
+    &-open {
+      transform: translateX(0);
+    }
+  }
+}
+
+// ── Mobile header ──────────────────────────────────────
+.mobile-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  height: $mobile-header-height;
+  background: $sidebar-bg;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1rem;
+
+  @media (min-width: 1024px) {
+    display: none;
+  }
+
+  &__burger {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    padding: 0.375rem;
+    border-radius: 0.5rem;
+    display: flex;
+
+    &:hover { background: rgba(255,255,255,0.1); }
+  }
+}
+
+// ── Overlay ────────────────────────────────────────────
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(0,0,0,0.45);
+
+  @media (min-width: 1024px) {
+    display: none;
+  }
+}
+
+// ── Content area ───────────────────────────────────────
+.dashboard-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: auto;
+}
+
+.dashboard-main {
+  flex: 1;
+  padding-top: $mobile-header-height;
+
+  @media (min-width: 1024px) {
+    padding-top: 0;
+  }
+}

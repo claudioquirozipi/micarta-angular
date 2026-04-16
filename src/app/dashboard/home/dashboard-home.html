@@ -1,0 +1,34 @@
+<div class="dash-home">
+  <div class="dash-home__header">
+    <h1 class="dash-home__title">
+      Bienvenido a <span>MiCarta</span>
+      @if (user()?.name) {, {{ user()!.name }}}
+    </h1>
+    <p class="dash-home__subtitle">
+      Desde aquí puedes gestionar tu menú digital, ver órdenes y mucho más.
+    </p>
+  </div>
+
+  <div class="dash-home__cards">
+    <div class="dash-card">
+      <span class="material-symbols-outlined dash-card__icon">restaurant</span>
+      <h2 class="dash-card__title">Menú</h2>
+      <p class="dash-card__desc">Agrega, edita y organiza los platos de tu carta.</p>
+    </div>
+    <div class="dash-card">
+      <span class="material-symbols-outlined dash-card__icon">receipt_long</span>
+      <h2 class="dash-card__title">Órdenes</h2>
+      <p class="dash-card__desc">Gestiona los pedidos de tus mesas en tiempo real.</p>
+    </div>
+    <div class="dash-card">
+      <span class="material-symbols-outlined dash-card__icon">qr_code_2</span>
+      <h2 class="dash-card__title">Mi QR</h2>
+      <p class="dash-card__desc">Descarga e imprime el código QR de tu carta digital.</p>
+    </div>
+    <div class="dash-card">
+      <span class="material-symbols-outlined dash-card__icon">group</span>
+      <h2 class="dash-card__title">Equipo</h2>
+      <p class="dash-card__desc">Administra a tu equipo de mozos y cocineros.</p>
+    </div>
+  </div>
+</div>
