@@ -32,7 +32,7 @@ export const routes: Routes = [
       {
         path: 'perfil',
         loadComponent: () =>
-          import('./dashboard/home/dashboard-home').then(m => m.DashboardHome), // placeholder
+          import('./restaurant/profile/restaurant-profile').then(m => m.RestaurantProfile),
       },
       {
         path: 'menu',

@@ -1,0 +1,162 @@
+<div class="rp-page">
+
+  <div class="rp-header">
+    <h1 class="rp-header__title">Perfil del restaurante</h1>
+    <p class="rp-header__sub">Esta información aparecerá en la carta digital que verán tus clientes.</p>
+  </div>
+
+  @if (loading()) {
+    <div class="rp-loading">
+      <span class="material-symbols-outlined rp-loading__icon">sync</span>
+      Cargando...
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="submit()" class="rp-form" novalidate>
+
+      @if (success()) {
+        <div class="rp-alert rp-alert--success">
+          <span class="material-symbols-outlined">check_circle</span>
+          Perfil guardado correctamente.
+        </div>
+      }
+      @if (error()) {
+        <div class="rp-alert rp-alert--error">
+          <span class="material-symbols-outlined">error</span>
+          {{ error() }}
+        </div>
+      }
+
+      <!-- ── Información básica ── -->
+      <section class="rp-section">
+        <h2 class="rp-section__title">Información básica</h2>
+
+        <div class="rp-grid">
+          <!-- Nombre -->
+          <div class="field rp-grid__full">
+            <label class="field__label" for="name">
+              Nombre del restaurante <span class="field__required">*</span>
+            </label>
+            <input
+              id="name"
+              type="text"
+              formControlName="name"
+              placeholder="Ej. Cevichería El Marino"
+              class="field__input"
+            />
+            @if (form.get('name')?.invalid && form.get('name')?.touched) {
+              <span class="field__error">El nombre es requerido (máx. 100 caracteres).</span>
+            }
+          </div>
+
+          <!-- Slug -->
+          <div class="field rp-grid__full">
+            <label class="field__label" for="slug">URL de tu carta</label>
+            <div class="field__slug-wrap">
+              <span class="field__slug-prefix">micarta.pe/</span>
+              <input
+                id="slug"
+                type="text"
+                formControlName="slug"
+                placeholder="mi-restaurante"
+                class="field__input field__input--slug"
+              />
+            </div>
+            <span class="field__hint">Solo letras minúsculas, números y guiones.</span>
+            @if (form.get('slug')?.invalid && form.get('slug')?.touched) {
+              <span class="field__error">Slug inválido.</span>
+            }
+          </div>
+
+          <!-- Descripción -->
+          <div class="field rp-grid__full">
+            <label class="field__label" for="description">Descripción</label>
+            <textarea
+              id="description"
+              formControlName="description"
+              rows="3"
+              placeholder="Describe brevemente tu restaurante..."
+              class="field__input field__input--textarea"
+            ></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Contacto ── -->
+      <section class="rp-section">
+        <h2 class="rp-section__title">Contacto</h2>
+
+        <div class="rp-grid rp-grid--2col">
+          <div class="field">
+            <label class="field__label" for="address">Dirección</label>
+            <input id="address" type="text" formControlName="address"
+              placeholder="Av. Larco 123, Miraflores" class="field__input" />
+          </div>
+          <div class="field">
+            <label class="field__label" for="phone">Teléfono</label>
+            <input id="phone" type="tel" formControlName="phone"
+              placeholder="01 234 5678" class="field__input" />
+          </div>
+          <div class="field">
+            <label class="field__label" for="whatsapp">WhatsApp</label>
+            <input id="whatsapp" type="tel" formControlName="whatsapp"
+              placeholder="51 999 888 777" class="field__input" />
+          </div>
+          <div class="field">
+            <label class="field__label" for="schedule">Horario</label>
+            <input id="schedule" type="text" formControlName="schedule"
+              placeholder="Lun–Vie 12:00–22:00" class="field__input" />
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Redes sociales ── -->
+      <section class="rp-section">
+        <h2 class="rp-section__title">Redes sociales</h2>
+
+        <div class="rp-grid rp-grid--2col" formArrayName="socialLinks">
+          @for (ctrl of socialLinksArray.controls; track $index) {
+            <div class="field" [formGroupName]="$index">
+              <label class="field__label">{{ platformLabel[platforms[$index]] }}</label>
+              <div class="field__social-wrap">
+                <span class="field__social-prefix">{{ platformPrefix[platforms[$index]] }}</span>
+                <input
+                  type="text"
+                  formControlName="handle"
+                  [placeholder]="platforms[$index] === 'YOUTUBE' ? 'micanal' : 'mirestaurante'"
+                  class="field__input field__input--social"
+                />
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- ── Owner (solo lectura) ── -->
+      @if (restaurant()) {
+        <section class="rp-section">
+          <h2 class="rp-section__title">Propietario</h2>
+          <div class="rp-owner">
+            <span class="material-symbols-outlined rp-owner__icon">person</span>
+            <div>
+              <p class="rp-owner__name">{{ restaurant()!.owner.name ?? restaurant()!.owner.email }}</p>
+              <p class="rp-owner__email">{{ restaurant()!.owner.email }}</p>
+            </div>
+            <span class="rp-owner__badge">Dueño</span>
+          </div>
+        </section>
+      }
+
+      <div class="rp-actions">
+        <button type="submit" class="btn btn--primary" [disabled]="saving()">
+          @if (saving()) {
+            <span class="material-symbols-outlined btn__spinner">sync</span>
+            Guardando...
+          } @else {
+            {{ isNew() ? 'Crear restaurante' : 'Guardar cambios' }}
+          }
+        </button>
+      </div>
+
+    </form>
+  }
+</div>

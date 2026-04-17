@@ -36,6 +36,8 @@
 }
 
 .dash-card {
+  display: flex;
+  text-decoration: none;
   background: var(--color-surface);
   border: 1px solid #e9eaec;
   border-radius: 1rem;
