@@ -6,6 +6,7 @@ import {
   signal,
   computed,
 } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import {
   FormBuilder,
   FormGroup,
@@ -14,6 +15,7 @@ import {
   ReactiveFormsModule,
   AbstractControl,
 } from '@angular/forms';
+import { filter, take } from 'rxjs/operators';
 import { RestaurantService } from '../../services/restaurant.service';
 import { SocialPlatform } from '../../models/restaurant.model';
 
@@ -73,12 +75,15 @@ export class RestaurantProfile implements OnInit {
 
   ngOnInit() {
     this.buildForm();
-    this.svc.loadMine().subscribe({
-      next: () => {
-        this.patchForm();
-        this.loading.set(false);
-      },
-      error: () => this.loading.set(false),
+
+    // Espera a que el DashboardLayout complete loadMine() (loaded = true),
+    // luego rellena el formulario. Funciona tanto si hay restaurante como si no.
+    toObservable(this.svc.loaded).pipe(
+      filter(loaded => loaded),
+      take(1),
+    ).subscribe(() => {
+      this.patchForm();
+      this.loading.set(false);
     });
   }
 

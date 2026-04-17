@@ -1,0 +1,180 @@
+<div class="rm-page">
+
+  <div class="rm-header">
+    <div>
+      <h1 class="rm-header__title">Equipo</h1>
+      <p class="rm-header__sub">Gestiona los miembros que tienen acceso a tu restaurante.</p>
+    </div>
+    <button class="btn btn--primary" (click)="toggleInviteForm()">
+      <span class="material-symbols-outlined">{{ showInviteForm() ? 'close' : 'person_add' }}</span>
+      {{ showInviteForm() ? 'Cancelar' : 'Agregar miembro' }}
+    </button>
+  </div>
+
+  <!-- ── Formulario de invitación ── -->
+  @if (showInviteForm()) {
+    <div class="invite-card">
+      <h2 class="invite-card__title">Invitar por correo</h2>
+
+      @if (inviteSuccess()) {
+        <div class="alert alert--success">
+          <span class="material-symbols-outlined">check_circle</span>
+          {{ inviteSuccess() }}
+        </div>
+      }
+      @if (inviteError()) {
+        <div class="alert alert--error">
+          <span class="material-symbols-outlined">error</span>
+          {{ inviteError() }}
+        </div>
+      }
+
+      <form [formGroup]="inviteForm" (ngSubmit)="submitInvite()" class="invite-form" novalidate>
+        <div class="field">
+          <label class="field__label" for="inv-email">Correo electrónico</label>
+          <input
+            id="inv-email"
+            type="email"
+            formControlName="email"
+            placeholder="mozo@correo.com"
+            class="field__input"
+          />
+          @if (inviteForm.get('email')?.invalid && inviteForm.get('email')?.touched) {
+            <span class="field__error">Ingresa un correo válido.</span>
+          }
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="inv-role">Rol</label>
+          <select id="inv-role" formControlName="role" class="field__input field__input--select">
+            @for (role of invitableRoles; track role) {
+              <option [value]="role">{{ roleLabel[role] }}</option>
+            }
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn--primary" [disabled]="inviting()">
+          @if (inviting()) {
+            <span class="material-symbols-outlined btn__spinner">sync</span>
+            Enviando...
+          } @else {
+            Enviar invitación
+          }
+        </button>
+      </form>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="rm-loading">
+      <span class="material-symbols-outlined rm-loading__icon">sync</span>
+      Cargando equipo...
+    </div>
+  } @else if (loadError()) {
+    <div class="alert alert--error">
+      <span class="material-symbols-outlined">error</span>
+      {{ loadError() }}
+    </div>
+  } @else {
+
+    <!-- ── Miembros activos ── -->
+    <section class="rm-section">
+      <h2 class="rm-section__title">Miembros ({{ members().length }})</h2>
+
+      @if (members().length === 0) {
+        <p class="rm-empty">Aún no hay miembros en el equipo.</p>
+      } @else {
+        <ul class="member-list">
+          @for (m of members(); track m.id) {
+            <li class="member-item" [class.member-item--inactive]="!m.isActive">
+
+              <!-- Avatar -->
+              @if (m.user.avatarUrl) {
+                <img class="member-item__avatar" [src]="m.user.avatarUrl" [alt]="m.user.name ?? m.user.email" />
+              } @else {
+                <div class="member-item__initials">
+                  {{ getInitials(m.user.name, m.user.email) }}
+                </div>
+              }
+
+              <!-- Info -->
+              <div class="member-item__info">
+                <p class="member-item__name">{{ m.user.name ?? m.user.email }}</p>
+                <p class="member-item__email">{{ m.user.email }}</p>
+              </div>
+
+              <!-- Role badge -->
+              <span class="role-badge role-badge--{{ m.role.toLowerCase() }}">
+                {{ roleLabel[m.role] }}
+              </span>
+
+              <!-- Estado + acciones (no para OWNER) -->
+              @if (m.role !== 'OWNER') {
+                <button
+                  class="toggle-btn"
+                  [class.toggle-btn--active]="m.isActive"
+                  (click)="toggleActive(m)"
+                  [attr.aria-label]="m.isActive ? 'Desactivar' : 'Activar'"
+                  title="{{ m.isActive ? 'Desactivar' : 'Activar' }}"
+                >
+                  <span class="material-symbols-outlined">
+                    {{ m.isActive ? 'toggle_on' : 'toggle_off' }}
+                  </span>
+                </button>
+
+                <button
+                  class="icon-btn icon-btn--danger"
+                  (click)="removeMember(m)"
+                  aria-label="Eliminar"
+                  title="Eliminar del equipo"
+                >
+                  <span class="material-symbols-outlined">person_remove</span>
+                </button>
+              }
+
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
+    <!-- ── Invitaciones pendientes ── -->
+    @if (invitations().length > 0) {
+      <section class="rm-section">
+        <h2 class="rm-section__title">Invitaciones pendientes ({{ invitations().length }})</h2>
+        <ul class="member-list">
+          @for (inv of invitations(); track inv.id) {
+            <li class="member-item member-item--pending">
+
+              <div class="member-item__avatar-pending">
+                <span class="material-symbols-outlined">mail</span>
+              </div>
+
+              <div class="member-item__info">
+                <p class="member-item__name">{{ inv.email }}</p>
+                <p class="member-item__email">Sin cuenta aún</p>
+              </div>
+
+              <span class="role-badge role-badge--{{ inv.role.toLowerCase() }}">
+                {{ roleLabel[inv.role] }}
+              </span>
+
+              <span class="pending-badge">Pendiente</span>
+
+              <button
+                class="icon-btn icon-btn--danger"
+                (click)="cancelInvitation(inv)"
+                aria-label="Cancelar invitación"
+                title="Cancelar invitación"
+              >
+                <span class="material-symbols-outlined">close</span>
+              </button>
+
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
+  }
+</div>

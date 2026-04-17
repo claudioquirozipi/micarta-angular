@@ -47,7 +47,7 @@ export const routes: Routes = [
       {
         path: 'equipo',
         loadComponent: () =>
-          import('./dashboard/pages/home/dashboard-home').then(m => m.DashboardHome), // placeholder
+          import('./restaurant/pages/members/restaurant-members').then(m => m.RestaurantMembers),
       },
       {
         path: 'preview',

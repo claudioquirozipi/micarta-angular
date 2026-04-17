@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../auth/services/auth.service';
+import { RestaurantService } from '../../restaurant/services/restaurant.service';
 
 interface NavItem {
   path: string;
@@ -15,7 +16,7 @@ interface NavItem {
   styleUrl: './dashboard-layout.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardLayout {
+export class DashboardLayout implements OnInit {
   readonly drawerOpen = signal(false);
 
   readonly navItems: NavItem[] = [
@@ -28,7 +29,20 @@ export class DashboardLayout {
     { path: '/dashboard/suscripcion', label: 'Suscripción',  icon: 'credit_card'  },
   ];
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(
+    private auth: AuthService,
+    private restaurantService: RestaurantService,
+    private router: Router,
+  ) {}
+
+  ngOnInit() {
+    // Carga el restaurante una sola vez al entrar al dashboard.
+    // Se usa loaded() como condición (no restaurant()) para cubrir el caso en que
+    // restaurant fue seteado por create/update pero loaded todavía es false.
+    if (!this.restaurantService.loaded()) {
+      this.restaurantService.loadMine().subscribe();
+    }
+  }
 
   openDrawer()  { this.drawerOpen.set(true);  }
   closeDrawer() { this.drawerOpen.set(false); }
