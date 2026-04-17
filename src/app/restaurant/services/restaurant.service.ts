@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   Restaurant,
+  SignedUploadParams,
   CreateRestaurantDto,
   UpdateRestaurantDto,
   MembersResponse,
@@ -59,6 +60,19 @@ export class RestaurantService {
   update(id: string, dto: UpdateRestaurantDto) {
     return this.http.patch<Restaurant>(`${API}/${id}`, dto).pipe(
       tap(r => this._restaurant.set(r)),
+    );
+  }
+
+  signLogoUpload(restaurantId: string) {
+    return this.http.post<SignedUploadParams>(`${API}/${restaurantId}/logo/sign`, {});
+  }
+
+  updateLogo(restaurantId: string, logoUrl: string) {
+    return this.http.patch<{ id: string; logoUrl: string }>(`${API}/${restaurantId}/logo`, { logoUrl }).pipe(
+      tap(r => {
+        const current = this._restaurant();
+        if (current) this._restaurant.set({ ...current, logoUrl: r.logoUrl });
+      }),
     );
   }
 

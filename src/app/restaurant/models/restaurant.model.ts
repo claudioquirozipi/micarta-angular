@@ -53,6 +53,14 @@ export interface Restaurant {
   updatedAt:   string;
 }
 
+export interface SignedUploadParams {
+  signature: string;
+  timestamp: number;
+  apiKey:    string;
+  cloudName: string;
+  publicId:  string;
+}
+
 export interface CreateRestaurantDto {
   name:         string;
   slug:         string;
