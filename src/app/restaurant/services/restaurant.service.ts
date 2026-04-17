@@ -1,6 +1,8 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { catchError, shareReplay, tap } from 'rxjs/operators';
+import { of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   Restaurant,
@@ -27,15 +29,25 @@ export class RestaurantService {
    */
   readonly loaded = this._loaded.asReadonly();
 
+  private _mine$: Observable<Restaurant | null> | null = null;
+
   constructor(private http: HttpClient) {}
 
-  loadMine() {
-    return this.http.get<Restaurant | null>(`${API}/mine`).pipe(
-      tap(r => {
-        this._restaurant.set(r);
-        this._loaded.set(true);
-      }),
-    );
+  loadMine(): Observable<Restaurant | null> {
+    if (!this._mine$) {
+      this._mine$ = this.http.get<Restaurant | null>(`${API}/mine`).pipe(
+        tap(r => {
+          this._restaurant.set(r);
+          this._loaded.set(true);
+        }),
+        catchError(() => {
+          this._loaded.set(true);
+          return of(null);
+        }),
+        shareReplay(1),
+      );
+    }
+    return this._mine$;
   }
 
   create(dto: CreateRestaurantDto) {
