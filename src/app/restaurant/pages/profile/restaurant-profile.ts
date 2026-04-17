@@ -14,8 +14,8 @@ import {
   ReactiveFormsModule,
   AbstractControl,
 } from '@angular/forms';
-import { RestaurantService } from '../services/restaurant.service';
-import { SocialPlatform } from '../models/restaurant.model';
+import { RestaurantService } from '../../services/restaurant.service';
+import { SocialPlatform } from '../../models/restaurant.model';
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 

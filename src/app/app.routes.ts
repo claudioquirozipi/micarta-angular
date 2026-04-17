@@ -8,15 +8,15 @@ export const routes: Routes = [
   },
   {
     path: 'login',
-    loadComponent: () => import('./auth/login/login').then(m => m.Login),
+    loadComponent: () => import('./auth/pages/login/login').then(m => m.Login),
   },
   {
     path: 'register',
-    loadComponent: () => import('./auth/register/register').then(m => m.Register),
+    loadComponent: () => import('./auth/pages/register/register').then(m => m.Register),
   },
   {
     path: 'auth/callback',
-    loadComponent: () => import('./auth/callback/callback').then(m => m.Callback),
+    loadComponent: () => import('./auth/pages/callback/callback').then(m => m.Callback),
   },
   {
     path: 'dashboard',
@@ -27,42 +27,42 @@ export const routes: Routes = [
       {
         path: '',
         loadComponent: () =>
-          import('./dashboard/home/dashboard-home').then(m => m.DashboardHome),
+          import('./dashboard/pages/home/dashboard-home').then(m => m.DashboardHome),
       },
       {
         path: 'perfil',
         loadComponent: () =>
-          import('./restaurant/profile/restaurant-profile').then(m => m.RestaurantProfile),
+          import('./restaurant/pages/profile/restaurant-profile').then(m => m.RestaurantProfile),
       },
       {
         path: 'menu',
         loadComponent: () =>
-          import('./dashboard/home/dashboard-home').then(m => m.DashboardHome), // placeholder
+          import('./dashboard/pages/home/dashboard-home').then(m => m.DashboardHome), // placeholder
       },
       {
         path: 'ordenes',
         loadComponent: () =>
-          import('./dashboard/home/dashboard-home').then(m => m.DashboardHome), // placeholder
+          import('./dashboard/pages/home/dashboard-home').then(m => m.DashboardHome), // placeholder
       },
       {
         path: 'equipo',
         loadComponent: () =>
-          import('./dashboard/home/dashboard-home').then(m => m.DashboardHome), // placeholder
+          import('./dashboard/pages/home/dashboard-home').then(m => m.DashboardHome), // placeholder
       },
       {
         path: 'preview',
         loadComponent: () =>
-          import('./dashboard/home/dashboard-home').then(m => m.DashboardHome), // placeholder
+          import('./dashboard/pages/home/dashboard-home').then(m => m.DashboardHome), // placeholder
       },
       {
         path: 'qr',
         loadComponent: () =>
-          import('./dashboard/home/dashboard-home').then(m => m.DashboardHome), // placeholder
+          import('./dashboard/pages/home/dashboard-home').then(m => m.DashboardHome), // placeholder
       },
       {
         path: 'suscripcion',
         loadComponent: () =>
-          import('./dashboard/home/dashboard-home').then(m => m.DashboardHome), // placeholder
+          import('./dashboard/pages/home/dashboard-home').then(m => m.DashboardHome), // placeholder
       },
     ],
   },
