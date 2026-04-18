@@ -3,8 +3,10 @@ import {
   computed, inject, signal,
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { Subscription } from 'rxjs';
 import { RestaurantService } from '../../../restaurant/services/restaurant.service';
 import { OrderService } from '../../../orders/order.service';
+import { OrderSseService } from '../../../orders/order-sse.service';
 import { Order, OrderStatus, STATUS_COLOR, STATUS_LABEL } from '../../../orders/order.model';
 
 type Tab = 'active' | 'paid' | 'cancelled' | 'all';
@@ -21,6 +23,7 @@ const ACTIVE_STATUSES: OrderStatus[] = ['PENDING', 'COOKING', 'READY', 'SERVED']
 export class DashboardOrders implements OnInit, OnDestroy {
   private restaurantSvc = inject(RestaurantService);
   private orderSvc      = inject(OrderService);
+  private sseSvc        = inject(OrderSseService);
 
   readonly restaurant = this.restaurantSvc.restaurant;
   readonly loading    = signal(true);
@@ -40,7 +43,7 @@ export class DashboardOrders implements OnInit, OnDestroy {
     return all;
   });
 
-  private pollTimer: ReturnType<typeof setInterval> | null = null;
+  private sseSub: Subscription | null = null;
 
   ngOnInit() {
     if (this.restaurantSvc.loaded()) {
@@ -50,15 +53,21 @@ export class DashboardOrders implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy() {
-    if (this.pollTimer) clearInterval(this.pollTimer);
-  }
+  ngOnDestroy() { this.sseSub?.unsubscribe(); }
 
   private load() {
     const r = this.restaurant();
     if (!r) { this.loading.set(false); return; }
     this.fetchOrders(r.id);
-    this.pollTimer = setInterval(() => this.fetchOrders(r.id), 15_000);
+    this.sseSub = this.sseSvc.connect(r.id).subscribe({
+      next: ({ event, data }) => {
+        if (event === 'order.created') {
+          this.orders.update(os => [data, ...os]);
+        } else {
+          this.orders.update(os => os.map(o => o.id === data.id ? data : o));
+        }
+      },
+    });
   }
 
   private fetchOrders(restaurantId: string) {

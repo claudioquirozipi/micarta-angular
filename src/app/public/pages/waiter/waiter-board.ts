@@ -4,9 +4,10 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { DatePipe } from '@angular/common';
+import { Subscription } from 'rxjs';
 import { AuthService } from '../../../auth/services/auth.service';
 import { OrderService } from '../../../orders/order.service';
+import { OrderSseService } from '../../../orders/order-sse.service';
 import { PublicMenuService } from '../../../menu/public-menu.service';
 import {
   MemberAccess, Order, OrderStatus,
@@ -18,7 +19,7 @@ interface CartItem { dishId: string; dishName: string; dishPrice: number; quanti
 
 @Component({
   selector: 'app-waiter-board',
-  imports: [FormsModule, DatePipe],
+  imports: [FormsModule],
   templateUrl: './waiter-board.html',
   styleUrl: './waiter-board.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,6 +29,7 @@ export class WaiterBoard implements OnInit, OnDestroy {
   private router   = inject(Router);
   private authSvc  = inject(AuthService);
   private orderSvc = inject(OrderService);
+  private sseSvc   = inject(OrderSseService);
   private menuSvc  = inject(PublicMenuService);
 
   readonly loading    = signal(true);
@@ -60,7 +62,7 @@ export class WaiterBoard implements OnInit, OnDestroy {
     this.cart().reduce((s, i) => s + i.dishPrice * i.quantity, 0),
   );
 
-  private pollTimer: ReturnType<typeof setInterval> | null = null;
+  private sseSub: Subscription | null = null;
 
   ngOnInit() {
     if (!this.authSvc.user()) {
@@ -78,13 +80,21 @@ export class WaiterBoard implements OnInit, OnDestroy {
         this.access.set(access);
         this.fetchOrders(access.id);
         this.loadMenu(slug);
-        this.pollTimer = setInterval(() => this.fetchOrders(access.id), 15_000);
+        this.sseSub = this.sseSvc.connect(access.id).subscribe({
+          next: ({ event, data }) => {
+            if (event === 'order.created') {
+              this.orders.update(os => [data, ...os]);
+            } else {
+              this.orders.update(os => os.map(o => o.id === data.id ? data : o));
+            }
+          },
+        });
       },
       error: () => { this.error.set('No tienes acceso a este restaurante.'); this.loading.set(false); },
     });
   }
 
-  ngOnDestroy() { if (this.pollTimer) clearInterval(this.pollTimer); }
+  ngOnDestroy() { this.sseSub?.unsubscribe(); }
 
   private fetchOrders(restaurantId: string) {
     this.orderSvc.list(restaurantId).subscribe(orders => {

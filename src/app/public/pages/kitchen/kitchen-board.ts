@@ -4,8 +4,10 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
+import { Subscription } from 'rxjs';
 import { AuthService } from '../../../auth/services/auth.service';
 import { OrderService } from '../../../orders/order.service';
+import { OrderSseService } from '../../../orders/order-sse.service';
 import { MemberAccess, Order } from '../../../orders/order.model';
 
 @Component({
@@ -20,6 +22,7 @@ export class KitchenBoard implements OnInit, OnDestroy {
   private router   = inject(Router);
   private authSvc  = inject(AuthService);
   private orderSvc = inject(OrderService);
+  private sseSvc   = inject(OrderSseService);
 
   readonly loading = signal(true);
   readonly error   = signal('');
@@ -29,7 +32,7 @@ export class KitchenBoard implements OnInit, OnDestroy {
   readonly pending  = computed(() => this.orders().filter(o => o.status === 'PENDING'));
   readonly cooking  = computed(() => this.orders().filter(o => o.status === 'COOKING'));
 
-  private pollTimer: ReturnType<typeof setInterval> | null = null;
+  private sseSub: Subscription | null = null;
   private prevPendingIds = new Set<string>();
 
   ngOnInit() {
@@ -47,13 +50,33 @@ export class KitchenBoard implements OnInit, OnDestroy {
         }
         this.access.set(access);
         this.fetchOrders(access.id);
-        this.pollTimer = setInterval(() => this.fetchOrders(access.id), 10_000);
+        this.sseSub = this.sseSvc.connect(access.id).subscribe({
+          next: ({ event, data }) => {
+            if (event === 'order.created' && (data.status === 'PENDING' || data.status === 'COOKING')) {
+              this.orders.update(os => [...os, data].sort(
+                (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+              ));
+              if (data.status === 'PENDING') this.playSound();
+            } else if (event === 'order.updated') {
+              if (data.status === 'PENDING' || data.status === 'COOKING') {
+                this.orders.update(os => {
+                  const exists = os.some(o => o.id === data.id);
+                  return exists
+                    ? os.map(o => o.id === data.id ? data : o)
+                    : [...os, data].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+                });
+              } else {
+                this.orders.update(os => os.filter(o => o.id !== data.id));
+              }
+            }
+          },
+        });
       },
       error: () => { this.error.set('No tienes acceso a este restaurante.'); this.loading.set(false); },
     });
   }
 
-  ngOnDestroy() { if (this.pollTimer) clearInterval(this.pollTimer); }
+  ngOnDestroy() { this.sseSub?.unsubscribe(); }
 
   private fetchOrders(restaurantId: string) {
     this.orderSvc.list(restaurantId, { status: 'PENDING' }).subscribe(pending => {
@@ -61,13 +84,7 @@ export class KitchenBoard implements OnInit, OnDestroy {
         const all = [...pending, ...cooking].sort(
           (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
         );
-
-        // Sound on new PENDING orders
-        const newIds = new Set(pending.map(o => o.id));
-        const hasNew = pending.some(o => !this.prevPendingIds.has(o.id));
-        if (hasNew && this.prevPendingIds.size > 0) this.playSound();
-        this.prevPendingIds = newIds;
-
+        this.prevPendingIds = new Set(pending.map(o => o.id));
         this.orders.set(all);
         this.loading.set(false);
       });
