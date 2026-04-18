@@ -8,7 +8,8 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { switchMap } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { RestaurantService } from '../../../restaurant/services/restaurant.service';
 import { MenuService } from '../../../menu/menu.service';
 import { SignedUploadParams } from '../../../restaurant/models/restaurant.model';
@@ -52,9 +53,10 @@ export class DashboardMenu implements OnInit {
   readonly dishPrice     = signal('');
   readonly dishAvailable = signal(true);
   readonly dishSaving    = signal(false);
-  readonly dishImgPreview  = signal<string | null>(null);
-  readonly dishImgUploading = signal(false);
-  readonly dishImgError    = signal('');
+  readonly dishImgPreview    = signal<string | null>(null);
+  readonly dishImgUploading  = signal(false);
+  readonly dishImgError      = signal('');
+  readonly pendingImageFile  = signal<File | null>(null);
 
   ngOnInit() {
     if (this.restaurantSvc.loaded()) {
@@ -146,6 +148,7 @@ export class DashboardMenu implements OnInit {
     this.dishAvailable.set(true);
     this.dishImgPreview.set(null);
     this.dishImgError.set('');
+    this.pendingImageFile.set(null);
     this.showDishForm.set(true);
   }
 
@@ -157,6 +160,7 @@ export class DashboardMenu implements OnInit {
     this.dishAvailable.set(dish.isAvailable);
     this.dishImgPreview.set(dish.imageUrl);
     this.dishImgError.set('');
+    this.pendingImageFile.set(null);
     this.showDishForm.set(true);
   }
 
@@ -170,7 +174,8 @@ export class DashboardMenu implements OnInit {
     if (!r || !cat || !name || isNaN(price) || price < 0) return;
 
     this.dishSaving.set(true);
-    const editing = this.editingDish();
+    const editing      = this.editingDish();
+    const pendingFile  = this.pendingImageFile();
     const dto = {
       name,
       description: this.dishDesc().trim() || undefined,
@@ -179,11 +184,22 @@ export class DashboardMenu implements OnInit {
       isAvailable: this.dishAvailable(),
     };
 
-    const obs$ = editing
+    const save$ = editing
       ? this.menuSvc.updateDish(r.id, editing.id, dto)
       : this.menuSvc.createDish(r.id, dto);
 
-    obs$.subscribe({
+    save$.pipe(
+      switchMap(dish => {
+        if (editing || !pendingFile) return of(dish);
+        return this.uploadDishImage(r.id, dish.id, pendingFile).pipe(
+          map(updated => ({ ...dish, imageUrl: updated.imageUrl })),
+          catchError(() => {
+            this.dishImgError.set('Plato creado, pero falló la imagen. Puedes subirla luego.');
+            return of(dish);
+          }),
+        );
+      }),
+    ).subscribe({
       next: dish => {
         this.categories.update(cats => cats.map(c =>
           c.id === cat.id
@@ -235,30 +251,19 @@ export class DashboardMenu implements OnInit {
     this.dishImgError.set('');
     if (file.size > MAX_IMG_BYTES) { this.dishImgError.set('Máx. 2 MB.'); return; }
 
+    this.dishImgPreview.set(URL.createObjectURL(file));
+
     const editing = this.editingDish();
-    if (!editing) return;
+    if (!editing) {
+      this.pendingImageFile.set(file);
+      return;
+    }
 
     const r = this.restaurant();
     if (!r) return;
 
-    this.dishImgPreview.set(URL.createObjectURL(file));
-
     this.dishImgUploading.set(true);
-    this.menuSvc.signDishImageUpload(r.id, editing.id).pipe(
-      switchMap((params: SignedUploadParams) => {
-        const fd = new FormData();
-        fd.append('file',       file);
-        fd.append('api_key',   params.apiKey);
-        fd.append('timestamp', String(params.timestamp));
-        fd.append('signature', params.signature);
-        fd.append('public_id', params.publicId);
-        fd.append('overwrite', 'true');
-        return this.http.post<{ secure_url: string }>(
-          `https://api.cloudinary.com/v1_1/${params.cloudName}/image/upload`, fd,
-        );
-      }),
-      switchMap(res => this.menuSvc.updateDishImage(r.id, editing.id, res.secure_url)),
-    ).subscribe({
+    this.uploadDishImage(r.id, editing.id, file).subscribe({
       next: updated => {
         this.categories.update(cats => cats.map(c =>
           c.id === editing.categoryId
@@ -269,5 +274,23 @@ export class DashboardMenu implements OnInit {
       },
       error: () => { this.dishImgError.set('Error al subir imagen.'); this.dishImgUploading.set(false); },
     });
+  }
+
+  private uploadDishImage(restaurantId: string, dishId: string, file: File) {
+    return this.menuSvc.signDishImageUpload(restaurantId, dishId).pipe(
+      switchMap((params: SignedUploadParams) => {
+        const fd = new FormData();
+        fd.append('file',      file);
+        fd.append('api_key',   params.apiKey);
+        fd.append('timestamp', String(params.timestamp));
+        fd.append('signature', params.signature);
+        fd.append('public_id', params.publicId);
+        fd.append('overwrite', 'true');
+        return this.http.post<{ secure_url: string }>(
+          `https://api.cloudinary.com/v1_1/${params.cloudName}/image/upload`, fd,
+        );
+      }),
+      switchMap(res => this.menuSvc.updateDishImage(restaurantId, dishId, res.secure_url)),
+    );
   }
 }

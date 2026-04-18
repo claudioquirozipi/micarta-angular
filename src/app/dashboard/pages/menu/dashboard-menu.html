@@ -121,7 +121,7 @@
         <!-- Imagen -->
         <div class="field modal__img-col">
           <label class="field__label">Imagen</label>
-          <button type="button" class="dish-img-upload" [class.dish-img-upload--has-img]="dishImgPreview()" (click)="dishImgInput.click()" [disabled]="dishImgUploading() || !editingDish()">
+          <button type="button" class="dish-img-upload" [class.dish-img-upload--has-img]="dishImgPreview()" (click)="dishImgInput.click()" [disabled]="dishImgUploading()">
             @if (dishImgUploading()) {
               <span class="material-symbols-outlined dish-img-upload__spinner">sync</span>
             } @else if (dishImgPreview()) {
@@ -131,9 +131,6 @@
               <span class="material-symbols-outlined dish-img-upload__icon">add_photo_alternate</span>
             }
           </button>
-          @if (!editingDish()) {
-            <p class="field__hint">Guarda primero para subir imagen.</p>
-          }
           @if (dishImgError()) {
             <p class="field__error">{{ dishImgError() }}</p>
           }
