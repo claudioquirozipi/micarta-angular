@@ -37,7 +37,7 @@ export const routes: Routes = [
       {
         path: 'menu',
         loadComponent: () =>
-          import('./dashboard/pages/home/dashboard-home').then(m => m.DashboardHome), // placeholder
+          import('./dashboard/pages/menu/dashboard-menu').then(m => m.DashboardMenu),
       },
       {
         path: 'ordenes',
@@ -65,6 +65,11 @@ export const routes: Routes = [
           import('./dashboard/pages/home/dashboard-home').then(m => m.DashboardHome), // placeholder
       },
     ],
+  },
+  {
+    path: 'r/:slug',
+    loadComponent: () =>
+      import('./public/pages/restaurant-menu/restaurant-menu').then(m => m.RestaurantMenu),
   },
   {
     path: '**',

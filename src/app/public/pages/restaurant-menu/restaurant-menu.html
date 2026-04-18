@@ -1,0 +1,154 @@
+<div class="pm-page">
+
+  @if (loading()) {
+    <div class="pm-loading"><span class="material-symbols-outlined pm-loading__icon">sync</span> Cargando menú...</div>
+  } @else if (error()) {
+    <div class="pm-error">{{ error() }}</div>
+  } @else if (restaurant()) {
+
+    <!-- ── Restaurant header ── -->
+    <header class="pm-header">
+      @if (restaurant()!.logoUrl) {
+        <img [src]="restaurant()!.logoUrl!" [alt]="restaurant()!.name" class="pm-header__logo" />
+      }
+      <div class="pm-header__info">
+        <h1 class="pm-header__name">{{ restaurant()!.name }}</h1>
+        @if (restaurant()!.description) {
+          <p class="pm-header__desc">{{ restaurant()!.description }}</p>
+        }
+        @if (restaurant()!.schedule) {
+          <p class="pm-header__meta">
+            <span class="material-symbols-outlined">schedule</span> {{ restaurant()!.schedule }}
+          </p>
+        }
+        @if (restaurant()!.address) {
+          <p class="pm-header__meta">
+            <span class="material-symbols-outlined">location_on</span> {{ restaurant()!.address }}
+          </p>
+        }
+      </div>
+    </header>
+
+    <!-- ── Category tabs ── -->
+    <nav class="pm-tabs" aria-label="Categorías">
+      @for (cat of categories(); track cat.id) {
+        <button
+          class="pm-tabs__tab"
+          [class.pm-tabs__tab--active]="activeCatId() === cat.id"
+          (click)="selectCategory(cat.id)"
+        >{{ cat.name }}</button>
+      }
+    </nav>
+
+    <!-- ── Dishes ── -->
+    <main class="pm-dishes">
+      @for (dish of activeDishes(); track dish.id) {
+        <div class="pm-dish">
+          @if (dish.imageUrl) {
+            <img [src]="dish.imageUrl" [alt]="dish.name" class="pm-dish__img" />
+          } @else {
+            <div class="pm-dish__img-placeholder">
+              <span class="material-symbols-outlined">restaurant</span>
+            </div>
+          }
+          <div class="pm-dish__info">
+            <p class="pm-dish__name">{{ dish.name }}</p>
+            @if (dish.description) {
+              <p class="pm-dish__desc">{{ dish.description }}</p>
+            }
+            <p class="pm-dish__price">S/ {{ dish.price.toFixed(2) }}</p>
+          </div>
+          <div class="pm-dish__qty">
+            @if (getQty(dish.id) === 0) {
+              <button class="pm-dish__add" (click)="add(dish)">
+                <span class="material-symbols-outlined">add</span>
+              </button>
+            } @else {
+              <button class="pm-dish__btn" (click)="remove(dish.id)">
+                <span class="material-symbols-outlined">remove</span>
+              </button>
+              <span class="pm-dish__count">{{ getQty(dish.id) }}</span>
+              <button class="pm-dish__btn" (click)="add(dish)">
+                <span class="material-symbols-outlined">add</span>
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </main>
+
+    <!-- ── Cart button ── -->
+    @if (cartCount() > 0) {
+      <button class="pm-cart-btn" (click)="cartOpen.set(true)">
+        <span class="material-symbols-outlined">shopping_cart</span>
+        <span class="pm-cart-btn__label">Ver pedido</span>
+        <span class="pm-cart-btn__badge">{{ cartCount() }}</span>
+        <span class="pm-cart-btn__total">S/ {{ cartTotal().toFixed(2) }}</span>
+      </button>
+    }
+
+    <!-- ── Cart sheet ── -->
+    @if (cartOpen()) {
+      <div class="pm-sheet-backdrop" (click)="cartOpen.set(false)">
+        <div class="pm-sheet" (click)="$event.stopPropagation()">
+          <div class="pm-sheet__header">
+            <h2 class="pm-sheet__title">Tu pedido</h2>
+            <button class="pm-sheet__close" (click)="cartOpen.set(false)">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+
+          <div class="pm-sheet__items">
+            @for (entry of cart(); track entry.dish.id) {
+              <div class="pm-sheet__item">
+                <span class="pm-sheet__item-name">{{ entry.dish.name }}</span>
+                <div class="pm-sheet__item-qty">
+                  <button class="pm-dish__btn pm-dish__btn--sm" (click)="remove(entry.dish.id)">
+                    <span class="material-symbols-outlined">remove</span>
+                  </button>
+                  <span>{{ entry.quantity }}</span>
+                  <button class="pm-dish__btn pm-dish__btn--sm" (click)="add(entry.dish)">
+                    <span class="material-symbols-outlined">add</span>
+                  </button>
+                </div>
+                <span class="pm-sheet__item-sub">S/ {{ (entry.dish.price * entry.quantity).toFixed(2) }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="pm-sheet__total">
+            <span>Total</span>
+            <span>S/ {{ cartTotal().toFixed(2) }}</span>
+          </div>
+
+          <div class="pm-sheet__form">
+            <div class="pm-field">
+              <label class="pm-field__label">Tu nombre <span class="pm-field__req">*</span></label>
+              <input class="pm-field__input" [class.pm-field__input--error]="nameError()" type="text"
+                [ngModel]="customerName()" (ngModelChange)="customerName.set($event); nameError.set(false)"
+                placeholder="Juan Pérez" />
+              @if (nameError()) { <span class="pm-field__error">El nombre es requerido.</span> }
+            </div>
+            <div class="pm-field">
+              <label class="pm-field__label">Teléfono (opcional)</label>
+              <input class="pm-field__input" type="tel" [ngModel]="customerPhone()" (ngModelChange)="customerPhone.set($event)" placeholder="987 654 321" />
+            </div>
+            <div class="pm-field">
+              <label class="pm-field__label">Dirección (si es delivery)</label>
+              <input class="pm-field__input" type="text" [ngModel]="customerAddress()" (ngModelChange)="customerAddress.set($event)" placeholder="Calle Principal 123" />
+            </div>
+          </div>
+
+          @if (restaurant()!.whatsapp) {
+            <button class="pm-sheet__wa-btn" (click)="sendWhatsApp()">
+              <span class="material-symbols-outlined">chat</span>
+              Enviar pedido por WhatsApp
+            </button>
+          } @else {
+            <p class="pm-sheet__no-wa">Este restaurante aún no tiene WhatsApp configurado.</p>
+          }
+        </div>
+      </div>
+    }
+  }
+</div>

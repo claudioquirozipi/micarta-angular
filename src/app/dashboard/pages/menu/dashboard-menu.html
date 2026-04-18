@@ -1,0 +1,174 @@
+<div class="dm-page">
+
+  <div class="dm-header">
+    <h1 class="dm-header__title">Menú</h1>
+    <button class="btn btn--primary" (click)="openAddCategory()" [disabled]="!restaurant()">
+      <span class="material-symbols-outlined">add</span> Categoría
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="dm-loading">
+      <span class="material-symbols-outlined dm-loading__icon">sync</span> Cargando...
+    </div>
+  } @else if (!restaurant()) {
+    <div class="dm-empty">Crea tu restaurante primero en la sección Perfil.</div>
+  } @else {
+
+    <!-- ── Category tabs ── -->
+    <div class="dm-tabs" role="tablist">
+      @for (cat of categories(); track cat.id) {
+        <button
+          class="dm-tabs__tab"
+          [class.dm-tabs__tab--active]="activeCatId() === cat.id"
+          (click)="selectCategory(cat.id)"
+          role="tab"
+        >
+          {{ cat.name }}
+          <span class="dm-tabs__tab-actions">
+            <span class="material-symbols-outlined" (click)="openEditCategory(cat, $event)" title="Editar">edit</span>
+            <span class="material-symbols-outlined" (click)="deleteCategory(cat, $event)" title="Eliminar">delete</span>
+          </span>
+        </button>
+      }
+      @if (!categories().length) {
+        <p class="dm-tabs__empty">Sin categorías — añade una para empezar.</p>
+      }
+    </div>
+
+    <!-- ── Dish grid ── -->
+    @if (activeCategory()) {
+      <div class="dm-dishes">
+        <div class="dm-dishes__bar">
+          <h2 class="dm-dishes__title">{{ activeCategory()!.name }}</h2>
+          <button class="btn btn--secondary" (click)="openAddDish()">
+            <span class="material-symbols-outlined">add</span> Plato
+          </button>
+        </div>
+
+        @if (!activeDishes().length) {
+          <p class="dm-dishes__empty">Sin platos en esta categoría aún.</p>
+        }
+
+        <div class="dm-grid">
+          @for (dish of activeDishes(); track dish.id) {
+            <div class="dish-card" [class.dish-card--unavailable]="!dish.isAvailable">
+              <div class="dish-card__img-wrap">
+                @if (dish.imageUrl) {
+                  <img [src]="dish.imageUrl" [alt]="dish.name" class="dish-card__img" />
+                } @else {
+                  <span class="material-symbols-outlined dish-card__img-placeholder">image</span>
+                }
+              </div>
+              <div class="dish-card__body">
+                <p class="dish-card__name">{{ dish.name }}</p>
+                <p class="dish-card__price">S/ {{ dish.price.toFixed(2) }}</p>
+                @if (dish.description) {
+                  <p class="dish-card__desc">{{ dish.description }}</p>
+                }
+              </div>
+              <div class="dish-card__actions">
+                <button class="dish-card__icon-btn" (click)="openEditDish(dish)" title="Editar">
+                  <span class="material-symbols-outlined">edit</span>
+                </button>
+                <button
+                  class="dish-card__icon-btn"
+                  [class.dish-card__icon-btn--active]="dish.isAvailable"
+                  (click)="toggleAvailability(dish)"
+                  [title]="dish.isAvailable ? 'Marcar agotado' : 'Marcar disponible'"
+                >
+                  <span class="material-symbols-outlined">{{ dish.isAvailable ? 'visibility' : 'visibility_off' }}</span>
+                </button>
+                <button class="dish-card__icon-btn dish-card__icon-btn--danger" (click)="deleteDish(dish)" title="Eliminar">
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  }
+
+</div>
+
+<!-- ── Category modal ── -->
+@if (showCatForm()) {
+  <div class="modal-backdrop" (click)="closeCatForm()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h3 class="modal__title">{{ editingCat() ? 'Editar categoría' : 'Nueva categoría' }}</h3>
+      <div class="field">
+        <label class="field__label">Nombre</label>
+        <input class="field__input" type="text" [ngModel]="catName()" (ngModelChange)="catName.set($event)" placeholder="Ej. Entradas" maxlength="100" />
+      </div>
+      <div class="modal__actions">
+        <button class="btn btn--ghost" (click)="closeCatForm()">Cancelar</button>
+        <button class="btn btn--primary" (click)="saveCat()" [disabled]="catSaving() || !catName().trim()">
+          {{ catSaving() ? 'Guardando...' : 'Guardar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ── Dish modal ── -->
+@if (showDishForm()) {
+  <div class="modal-backdrop" (click)="closeDishForm()">
+    <div class="modal modal--wide" (click)="$event.stopPropagation()">
+      <h3 class="modal__title">{{ editingDish() ? 'Editar plato' : 'Nuevo plato' }}</h3>
+
+      <div class="modal__grid">
+        <!-- Imagen -->
+        <div class="field modal__img-col">
+          <label class="field__label">Imagen</label>
+          <button type="button" class="dish-img-upload" [class.dish-img-upload--has-img]="dishImgPreview()" (click)="dishImgInput.click()" [disabled]="dishImgUploading()">
+            @if (dishImgUploading()) {
+              <span class="material-symbols-outlined dish-img-upload__spinner">sync</span>
+            } @else if (dishImgPreview()) {
+              <img [src]="dishImgPreview()!" class="dish-img-upload__img" alt="Vista previa" />
+              <div class="dish-img-upload__overlay"><span class="material-symbols-outlined">photo_camera</span></div>
+            } @else {
+              <span class="material-symbols-outlined dish-img-upload__icon">add_photo_alternate</span>
+            }
+          </button>
+          @if (!editingDish()) {
+            <p class="field__hint">Guarda primero para subir imagen.</p>
+          }
+          @if (dishImgError()) {
+            <p class="field__error">{{ dishImgError() }}</p>
+          }
+          <input #dishImgInput type="file" accept="image/jpeg,image/png,image/webp" style="display:none" (change)="onDishImageSelected($event)" />
+        </div>
+
+        <!-- Fields -->
+        <div class="modal__fields-col">
+          <div class="field">
+            <label class="field__label">Nombre <span class="field__required">*</span></label>
+            <input class="field__input" type="text" [ngModel]="dishName()" (ngModelChange)="dishName.set($event)" placeholder="Ej. Ceviche mixto" maxlength="100" />
+          </div>
+          <div class="field">
+            <label class="field__label">Descripción</label>
+            <textarea class="field__input field__input--textarea" [ngModel]="dishDesc()" (ngModelChange)="dishDesc.set($event)" placeholder="Ingredientes o notas..." rows="2" maxlength="500"></textarea>
+          </div>
+          <div class="field">
+            <label class="field__label">Precio (S/) <span class="field__required">*</span></label>
+            <input class="field__input" type="number" min="0" step="0.5" [ngModel]="dishPrice()" (ngModelChange)="dishPrice.set($event)" placeholder="0.00" />
+          </div>
+          <div class="field field--row">
+            <label class="field__label">Disponible</label>
+            <button type="button" class="toggle" [class.toggle--on]="dishAvailable()" (click)="dishAvailable.set(!dishAvailable())">
+              <span class="toggle__thumb"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal__actions">
+        <button class="btn btn--ghost" (click)="closeDishForm()">Cancelar</button>
+        <button class="btn btn--primary" (click)="saveDish()" [disabled]="dishSaving() || !dishName().trim() || !dishPrice()">
+          {{ dishSaving() ? 'Guardando...' : 'Guardar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
