@@ -57,7 +57,7 @@ export const routes: Routes = [
       {
         path: 'qr',
         loadComponent: () =>
-          import('./dashboard/pages/home/dashboard-home').then(m => m.DashboardHome), // placeholder
+          import('./dashboard/pages/qr/dashboard-qr').then(m => m.DashboardQr),
       },
       {
         path: 'suscripcion',

@@ -1,0 +1,133 @@
+.qr-loading, .qr-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: 4rem 1rem;
+  color: var(--color-muted);
+  font-size: .9375rem;
+
+  a { color: var(--color-primary); text-decoration: underline; }
+}
+
+.qr-loading__icon { animation: spin 1s linear infinite; }
+.qr-empty__icon   { font-size: 2.5rem; color: #d1d5db; }
+
+// ── Page ──────────────────────────────────────────────────
+.qr-page {
+  max-width: 28rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+// ── Header ────────────────────────────────────────────────
+.qr-header {
+  margin-bottom: 1.75rem;
+
+  &__title {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  &__sub {
+    font-size: .875rem;
+    color: var(--color-muted);
+    margin-top: .25rem;
+  }
+}
+
+// ── Content ───────────────────────────────────────────────
+.qr-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+// ── Canvas ────────────────────────────────────────────────
+.qr-canvas-wrap {
+  width: 100%;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,0,0,.1);
+  border: 1px solid #e9eaec;
+}
+
+.qr-canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+// ── URL bar ───────────────────────────────────────────────
+.qr-url-bar {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: .875rem;
+  padding: .75rem 1rem;
+  width: 100%;
+
+  &__text {
+    flex: 1;
+    font-size: .8125rem;
+    color: var(--color-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+
+  &__copy {
+    font-size: .8125rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 0;
+
+    &:hover { text-decoration: underline; }
+  }
+}
+
+// ── Download button ───────────────────────────────────────
+.qr-download-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  width: 100%;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: .9375rem;
+  font-weight: 600;
+  padding: .875rem 1.5rem;
+  border: none;
+  border-radius: .875rem;
+  cursor: pointer;
+  transition: background .15s;
+
+  .material-symbols-outlined { font-size: 1.25rem; }
+
+  &:hover:not(:disabled) { background: var(--color-primary-hover); }
+
+  &:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+  }
+}
+
+.qr-hint {
+  font-size: .8125rem;
+  color: var(--color-muted);
+  text-align: center;
+  line-height: 1.5;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }

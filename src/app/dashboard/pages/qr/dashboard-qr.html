@@ -1,0 +1,43 @@
+@if (loading()) {
+  <div class="qr-loading">
+    <span class="material-symbols-outlined qr-loading__icon">sync</span> Cargando...
+  </div>
+} @else if (!restaurant()?.slug) {
+  <div class="qr-empty">
+    <span class="material-symbols-outlined qr-empty__icon">qr_code</span>
+    <p>Primero configura tu restaurante en <a routerLink="/dashboard/perfil">Perfil</a>.</p>
+  </div>
+} @else {
+  <div class="qr-page">
+
+    <div class="qr-header">
+      <h1 class="qr-header__title">Mi QR</h1>
+      <p class="qr-header__sub">Descarga el código QR e imprímelo en las mesas de tu restaurante.</p>
+    </div>
+
+    <div class="qr-content">
+
+      <!-- Canvas preview -->
+      <div class="qr-canvas-wrap">
+        <canvas #qrCanvas class="qr-canvas"></canvas>
+      </div>
+
+      <!-- URL con botón copiar -->
+      <div class="qr-url-bar">
+        <span class="qr-url-bar__text">{{ publicUrl }}</span>
+        <button class="qr-url-bar__copy" (click)="copyUrl()">
+          {{ copied() ? '¡Copiado!' : 'Copiar' }}
+        </button>
+      </div>
+
+      <!-- Botón descarga -->
+      <button class="qr-download-btn" (click)="download()" [disabled]="!ready()">
+        <span class="material-symbols-outlined">download</span>
+        Descargar QR en alta resolución
+      </button>
+
+      <p class="qr-hint">El QR se descarga en 1000 × 1160 px, listo para imprimir en las mesas.</p>
+
+    </div>
+  </div>
+}
