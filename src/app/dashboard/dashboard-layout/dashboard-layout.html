@@ -6,14 +6,19 @@
 
   <nav class="sidebar__nav">
     @for (item of navItems; track item.path) {
-      <a
-        [routerLink]="item.path"
-        routerLinkActive="sidebar__link--active"
-        class="sidebar__link"
-      >
+      <a [routerLink]="item.path" routerLinkActive="sidebar__link--active" class="sidebar__link">
         <span class="material-symbols-outlined sidebar__icon">{{ item.icon }}</span>
         {{ item.label }}
       </a>
+    }
+    @if (staffItems().length) {
+      <p class="sidebar__section-label">Staff</p>
+      @for (item of staffItems(); track item.path) {
+        <a [routerLink]="item.path" routerLinkActive="sidebar__link--active" class="sidebar__link sidebar__link--staff">
+          <span class="material-symbols-outlined sidebar__icon">{{ item.icon }}</span>
+          {{ item.label }}
+        </a>
+      }
     }
   </nav>
 

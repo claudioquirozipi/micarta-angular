@@ -78,6 +78,20 @@ $mobile-header-height: 3.5rem;
     }
   }
 
+  &__section-label {
+    font-size: .6875rem;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.35);
+    padding: .875rem .875rem .25rem;
+  }
+
+  &__link--staff {
+    color: rgba(255,255,255,.5);
+    font-style: italic;
+  }
+
   &__icon {
     font-size: 1.125rem;
     font-variation-settings: 'FILL' 0, 'wght' 400;

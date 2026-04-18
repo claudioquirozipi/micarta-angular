@@ -1,13 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../auth/services/auth.service';
 import { RestaurantService } from '../../restaurant/services/restaurant.service';
 
-interface NavItem {
-  path: string;
-  label: string;
-  icon: string;
-}
+interface NavItem { path: string; label: string; icon: string; }
 
 @Component({
   selector: 'app-dashboard-layout',
@@ -28,6 +24,15 @@ export class DashboardLayout implements OnInit {
     { path: '/dashboard/qr',          label: 'Mi QR',        icon: 'qr_code_2'   },
     { path: '/dashboard/suscripcion', label: 'Suscripción',  icon: 'credit_card'  },
   ];
+
+  readonly staffItems = computed(() => {
+    const slug = this.restaurantService.restaurant()?.slug;
+    if (!slug) return [];
+    return [
+      { path: `/r/${slug}/mesero`, label: 'Mesero', icon: 'table_restaurant' },
+      { path: `/r/${slug}/cocina`, label: 'Cocina',  icon: 'soup_kitchen'    },
+    ];
+  });
 
   constructor(
     private auth: AuthService,
