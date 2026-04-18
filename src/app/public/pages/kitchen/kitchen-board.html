@@ -1,0 +1,93 @@
+<div class="kb-page">
+
+  @if (loading()) {
+    <div class="kb-loading"><span class="material-symbols-outlined kb-spin">sync</span> Cargando...</div>
+  } @else if (error()) {
+    <div class="kb-error">{{ error() }}</div>
+  } @else {
+
+    <header class="kb-header">
+      <span class="material-symbols-outlined">soup_kitchen</span>
+      <div>
+        <h1 class="kb-header__title">{{ access()!.name }}</h1>
+        <p class="kb-header__sub">Panel de cocina</p>
+      </div>
+    </header>
+
+    <div class="kb-board">
+
+      <!-- Pendientes -->
+      <div class="kb-col">
+        <div class="kb-col__header kb-col__header--pending">
+          <span class="material-symbols-outlined">schedule</span>
+          Pendientes
+          <span class="kb-col__count">{{ pending().length }}</span>
+        </div>
+        @if (!pending().length) {
+          <div class="kb-col__empty">Sin pedidos pendientes</div>
+        }
+        @for (order of pending(); track order.id) {
+          <div class="kb-card kb-card--pending">
+            <div class="kb-card__top">
+              @if (order.tableNumber) { <span class="kb-card__table">Mesa {{ order.tableNumber }}</span> }
+              @if (order.customerName) { <span class="kb-card__customer">{{ order.customerName }}</span> }
+              <span class="kb-card__time">{{ order.createdAt | date:'HH:mm' }}</span>
+            </div>
+            <div class="kb-card__items">
+              @for (item of order.items; track item.id) {
+                <div class="kb-card__item">
+                  <span class="kb-card__qty">{{ item.quantity }}×</span>
+                  <span class="kb-card__name">{{ item.dishName }}</span>
+                </div>
+              }
+            </div>
+            @if (order.notes) {
+              <p class="kb-card__notes">📝 {{ order.notes }}</p>
+            }
+            <button class="kb-btn kb-btn--start" (click)="startCooking(order)">
+              <span class="material-symbols-outlined">local_fire_department</span>
+              Empezar a preparar
+            </button>
+          </div>
+        }
+      </div>
+
+      <!-- En preparación -->
+      <div class="kb-col">
+        <div class="kb-col__header kb-col__header--cooking">
+          <span class="material-symbols-outlined">local_fire_department</span>
+          En preparación
+          <span class="kb-col__count">{{ cooking().length }}</span>
+        </div>
+        @if (!cooking().length) {
+          <div class="kb-col__empty">Nada en preparación</div>
+        }
+        @for (order of cooking(); track order.id) {
+          <div class="kb-card kb-card--cooking">
+            <div class="kb-card__top">
+              @if (order.tableNumber) { <span class="kb-card__table">Mesa {{ order.tableNumber }}</span> }
+              @if (order.customerName) { <span class="kb-card__customer">{{ order.customerName }}</span> }
+              <span class="kb-card__time">{{ order.createdAt | date:'HH:mm' }}</span>
+            </div>
+            <div class="kb-card__items">
+              @for (item of order.items; track item.id) {
+                <div class="kb-card__item">
+                  <span class="kb-card__qty">{{ item.quantity }}×</span>
+                  <span class="kb-card__name">{{ item.dishName }}</span>
+                </div>
+              }
+            </div>
+            @if (order.notes) {
+              <p class="kb-card__notes">📝 {{ order.notes }}</p>
+            }
+            <button class="kb-btn kb-btn--ready" (click)="markReady(order)">
+              <span class="material-symbols-outlined">check_circle</span>
+              Marcar listo
+            </button>
+          </div>
+        }
+      </div>
+
+    </div>
+  }
+</div>

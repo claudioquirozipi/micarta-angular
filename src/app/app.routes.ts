@@ -42,7 +42,7 @@ export const routes: Routes = [
       {
         path: 'ordenes',
         loadComponent: () =>
-          import('./dashboard/pages/home/dashboard-home').then(m => m.DashboardHome), // placeholder
+          import('./dashboard/pages/orders/dashboard-orders').then(m => m.DashboardOrders),
       },
       {
         path: 'equipo',
@@ -70,6 +70,21 @@ export const routes: Routes = [
     path: 'r/:slug',
     loadComponent: () =>
       import('./public/pages/restaurant-menu/restaurant-menu').then(m => m.RestaurantMenu),
+  },
+  {
+    path: 'r/:slug/confirmar',
+    loadComponent: () =>
+      import('./public/pages/confirm-order/confirm-order').then(m => m.ConfirmOrder),
+  },
+  {
+    path: 'r/:slug/mesero',
+    loadComponent: () =>
+      import('./public/pages/waiter/waiter-board').then(m => m.WaiterBoard),
+  },
+  {
+    path: 'r/:slug/cocina',
+    loadComponent: () =>
+      import('./public/pages/kitchen/kitchen-board').then(m => m.KitchenBoard),
   },
   {
     path: '**',

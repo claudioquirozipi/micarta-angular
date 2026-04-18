@@ -1,0 +1,71 @@
+<div class="co-page">
+  @if (loading()) {
+    <div class="co-loading">
+      <span class="material-symbols-outlined co-loading__icon">sync</span> Cargando pedido...
+    </div>
+
+  } @else if (success()) {
+    <div class="co-success">
+      <span class="material-symbols-outlined co-success__icon">check_circle</span>
+      <h2 class="co-success__title">¡Pedido confirmado!</h2>
+      <p class="co-success__desc">El pedido fue registrado correctamente.</p>
+      <a routerLink="/dashboard/ordenes" class="co-btn co-btn--primary">Ver órdenes</a>
+    </div>
+
+  } @else {
+    <div class="co-card">
+      <div class="co-card__header">
+        <span class="material-symbols-outlined co-card__icon">receipt_long</span>
+        <div>
+          <h1 class="co-card__title">Confirmar pedido</h1>
+          <p class="co-card__sub">{{ restaurantName() }}</p>
+        </div>
+      </div>
+
+      @if (error()) {
+        <div class="co-error">{{ error() }}</div>
+      }
+
+      @if (items().length) {
+        <!-- Customer info -->
+        @if (customerName()) {
+          <div class="co-customer">
+            <span class="material-symbols-outlined">person</span>
+            <div>
+              <p class="co-customer__name">{{ customerName() }}</p>
+              @if (customerPhone()) { <p class="co-customer__meta">📞 {{ customerPhone() }}</p> }
+              @if (customerAddress()) { <p class="co-customer__meta">📍 {{ customerAddress() }}</p> }
+            </div>
+          </div>
+        }
+
+        <!-- Items -->
+        <div class="co-items">
+          @for (item of items(); track item.dish.id) {
+            <div class="co-item">
+              <span class="co-item__qty">{{ item.quantity }}×</span>
+              <span class="co-item__name">{{ item.dish.name }}</span>
+              <span class="co-item__sub">S/ {{ item.subtotal.toFixed(2) }}</span>
+            </div>
+          }
+        </div>
+
+        <div class="co-total">
+          <span>Total</span>
+          <span>S/ {{ total().toFixed(2) }}</span>
+        </div>
+
+        @if (!isLoggedIn()) {
+          <p class="co-login-hint">
+            Debes <a routerLink="/login">iniciar sesión</a> para confirmar el pedido.
+          </p>
+        }
+
+        <button class="co-btn co-btn--primary co-btn--full" (click)="confirm()" [disabled]="saving()">
+          <span class="material-symbols-outlined">check</span>
+          {{ saving() ? 'Confirmando...' : 'Confirmar pedido' }}
+        </button>
+      }
+    </div>
+  }
+</div>

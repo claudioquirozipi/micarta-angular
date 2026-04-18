@@ -1,0 +1,156 @@
+<div class="wb-page">
+
+  @if (loading()) {
+    <div class="wb-loading"><span class="material-symbols-outlined wb-spin">sync</span> Cargando...</div>
+  } @else if (error()) {
+    <div class="wb-error">{{ error() }}</div>
+  } @else {
+
+    <!-- Header -->
+    <header class="wb-header">
+      <div class="wb-header__info">
+        <span class="material-symbols-outlined wb-header__icon">table_restaurant</span>
+        <div>
+          <h1 class="wb-header__title">{{ access()!.name }}</h1>
+          <p class="wb-header__sub">Panel de mesero</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tabs -->
+    <div class="wb-tabs">
+      <button class="wb-tabs__btn" [class.wb-tabs__btn--active]="activeTab() === 'orders'" (click)="setTab('orders')">
+        <span class="material-symbols-outlined">receipt_long</span>
+        Órdenes
+        @if (activeOrders().length) { <span class="wb-tabs__badge">{{ activeOrders().length }}</span> }
+      </button>
+      <button class="wb-tabs__btn" [class.wb-tabs__btn--active]="activeTab() === 'new'" (click)="setTab('new')">
+        <span class="material-symbols-outlined">add_circle</span>
+        Nueva orden
+      </button>
+    </div>
+
+    <!-- ── Orders tab ── -->
+    @if (activeTab() === 'orders') {
+      @if (!activeOrders().length) {
+        <div class="wb-empty">
+          <span class="material-symbols-outlined wb-empty__icon">check_circle</span>
+          <p>Sin órdenes activas.</p>
+        </div>
+      } @else {
+        <div class="wb-orders">
+          @for (order of activeOrders(); track order.id) {
+            <div class="wb-card">
+              <div class="wb-card__row" (click)="toggle(order.id)">
+                <span class="wb-badge" [style.background]="STATUS_COLOR[order.status] + '22'" [style.color]="STATUS_COLOR[order.status]">
+                  {{ STATUS_LABEL[order.status] }}
+                </span>
+                <div class="wb-card__info">
+                  @if (order.tableNumber) { <span class="wb-tag">Mesa {{ order.tableNumber }}</span> }
+                  @if (order.customerName) { <span class="wb-card__customer">{{ order.customerName }}</span> }
+                  <span class="wb-card__items">{{ order.items.length }} item{{ order.items.length !== 1 ? 's' : '' }}</span>
+                </div>
+                <div class="wb-card__right">
+                  <span class="wb-card__total">S/ {{ order.total.toFixed(2) }}</span>
+                  <span class="material-symbols-outlined wb-card__chevron">{{ expanded() === order.id ? 'expand_less' : 'expand_more' }}</span>
+                </div>
+              </div>
+
+              @if (expanded() === order.id) {
+                <div class="wb-card__detail">
+                  <div class="wb-items">
+                    @for (item of order.items; track item.id) {
+                      <div class="wb-item">
+                        <span class="wb-item__qty">{{ item.quantity }}×</span>
+                        <span class="wb-item__name">{{ item.dishName }}</span>
+                        <span class="wb-item__sub">S/ {{ item.subtotal.toFixed(2) }}</span>
+                      </div>
+                    }
+                  </div>
+                  <div class="wb-card__actions">
+                    <button class="wb-btn wb-btn--pay" [class.wb-btn--paid]="order.isPaid" (click)="togglePayment(order)">
+                      {{ order.isPaid ? '✓ Pagado' : 'Marcar pagado' }}
+                    </button>
+                    @for (status of waiterActions(order); track status) {
+                      <button class="wb-btn" [class.wb-btn--danger]="status === 'CANCELLED'" (click)="updateStatus(order, status)">
+                        {{ STATUS_LABEL[status] }}
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    }
+
+    <!-- ── New order tab ── -->
+    @if (activeTab() === 'new') {
+      <div class="wb-new">
+
+        <div class="wb-form-row">
+          <div class="wb-field">
+            <label class="wb-field__label">Mesa</label>
+            <input class="wb-field__input" type="text" [ngModel]="tableNumber()" (ngModelChange)="tableNumber.set($event)" placeholder="Ej. 5" />
+          </div>
+          <div class="wb-field">
+            <label class="wb-field__label">Notas</label>
+            <input class="wb-field__input" type="text" [ngModel]="notes()" (ngModelChange)="notes.set($event)" placeholder="Sin cebolla, etc." />
+          </div>
+        </div>
+
+        <div class="wb-direct">
+          <label class="wb-direct__label">
+            <button type="button" class="wb-toggle" [class.wb-toggle--on]="directDelivery()" (click)="directDelivery.set(!directDelivery())">
+              <span class="wb-toggle__thumb"></span>
+            </button>
+            Entrega directa (sin pasar por cocina)
+          </label>
+        </div>
+
+        <!-- Category tabs -->
+        <div class="wb-cat-tabs">
+          @for (cat of categories(); track cat.id) {
+            <button class="wb-cat-tab" [class.wb-cat-tab--active]="activeCatId() === cat.id" (click)="selectCat(cat.id)">
+              {{ cat.name }}
+            </button>
+          }
+        </div>
+
+        <!-- Dishes -->
+        <div class="wb-dishes">
+          @for (dish of activeDishes(); track dish.id) {
+            <div class="wb-dish">
+              <div class="wb-dish__info">
+                <p class="wb-dish__name">{{ dish.name }}</p>
+                <p class="wb-dish__price">S/ {{ dish.price.toFixed(2) }}</p>
+              </div>
+              <div class="wb-dish__qty">
+                @if (getQty(dish.id) > 0) {
+                  <button class="wb-qty-btn" (click)="removeFromCart(dish.id)">
+                    <span class="material-symbols-outlined">remove</span>
+                  </button>
+                  <span class="wb-qty-count">{{ getQty(dish.id) }}</span>
+                }
+                <button class="wb-qty-btn wb-qty-btn--add" (click)="addToCart(dish)">
+                  <span class="material-symbols-outlined">add</span>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Cart summary -->
+        @if (cart().length) {
+          <div class="wb-cart-bar">
+            <span>{{ cart().reduce((s, i) => s + i.quantity, 0) }} items · S/ {{ cartTotal().toFixed(2) }}</span>
+            <button class="wb-btn wb-btn--primary" (click)="submitOrder()" [disabled]="saving()">
+              {{ saving() ? 'Enviando...' : 'Enviar orden' }}
+            </button>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

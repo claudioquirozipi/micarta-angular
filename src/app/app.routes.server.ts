@@ -26,7 +26,19 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client,
   },
   {
-    path: 'r/:slug',         // menú público → solo cliente
+    path: 'r/:slug',
+    renderMode: RenderMode.Client,
+  },
+  {
+    path: 'r/:slug/confirmar',
+    renderMode: RenderMode.Client,
+  },
+  {
+    path: 'r/:slug/mesero',
+    renderMode: RenderMode.Client,
+  },
+  {
+    path: 'r/:slug/cocina',
     renderMode: RenderMode.Client,
   },
   {

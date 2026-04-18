@@ -1,0 +1,100 @@
+<div class="do-page">
+  <div class="do-header">
+    <h1 class="do-header__title">Órdenes</h1>
+  </div>
+
+  <!-- Tabs -->
+  <div class="do-tabs">
+    <button class="do-tabs__btn" [class.do-tabs__btn--active]="activeTab() === 'active'"    (click)="setTab('active')">Activas</button>
+    <button class="do-tabs__btn" [class.do-tabs__btn--active]="activeTab() === 'paid'"      (click)="setTab('paid')">Pagadas</button>
+    <button class="do-tabs__btn" [class.do-tabs__btn--active]="activeTab() === 'cancelled'" (click)="setTab('cancelled')">Canceladas</button>
+    <button class="do-tabs__btn" [class.do-tabs__btn--active]="activeTab() === 'all'"       (click)="setTab('all')">Todas</button>
+  </div>
+
+  @if (loading()) {
+    <div class="do-loading"><span class="material-symbols-outlined do-spin">sync</span> Cargando...</div>
+  } @else if (!filtered().length) {
+    <div class="do-empty">
+      <span class="material-symbols-outlined do-empty__icon">receipt_long</span>
+      <p>No hay órdenes aquí.</p>
+    </div>
+  } @else {
+    <div class="do-list">
+      @for (order of filtered(); track order.id) {
+        <div class="do-card" [class.do-card--expanded]="expanded() === order.id">
+
+          <!-- Summary row -->
+          <div class="do-card__row" (click)="toggle(order.id)">
+            <!-- Creator -->
+            <div class="do-creator">
+              @if (order.createdBy?.avatarUrl) {
+                <img [src]="order.createdBy!.avatarUrl!" class="do-creator__avatar" [alt]="order.createdBy!.name ?? ''" />
+              } @else {
+                <span class="do-creator__avatar do-creator__avatar--placeholder material-symbols-outlined">person</span>
+              }
+              <span class="do-creator__name">{{ order.createdBy?.name ?? 'Sistema' }}</span>
+            </div>
+
+            <!-- Status badge -->
+            <span class="do-badge" [style.background]="STATUS_COLOR[order.status] + '22'" [style.color]="STATUS_COLOR[order.status]">
+              {{ STATUS_LABEL[order.status] }}
+            </span>
+
+            <!-- Meta -->
+            <div class="do-card__meta">
+              @if (order.tableNumber) { <span class="do-tag">Mesa {{ order.tableNumber }}</span> }
+              @if (order.type === 'WHATSAPP') { <span class="do-tag do-tag--wa">WhatsApp</span> }
+              <span class="do-card__total">S/ {{ order.total.toFixed(2) }}</span>
+              <span class="do-card__time">{{ order.createdAt | date:'HH:mm' }}</span>
+              <span class="do-card__chevron material-symbols-outlined">{{ expanded() === order.id ? 'expand_less' : 'expand_more' }}</span>
+            </div>
+          </div>
+
+          <!-- Expanded detail -->
+          @if (expanded() === order.id) {
+            <div class="do-card__detail">
+              @if (order.customerName) {
+                <p class="do-detail__customer">
+                  <span class="material-symbols-outlined">person</span> {{ order.customerName }}
+                  @if (order.customerPhone) { · {{ order.customerPhone }} }
+                  @if (order.customerAddress) { · {{ order.customerAddress }} }
+                </p>
+              }
+
+              <div class="do-items">
+                @for (item of order.items; track item.id) {
+                  <div class="do-item">
+                    <span class="do-item__qty">{{ item.quantity }}×</span>
+                    <span class="do-item__name">{{ item.dishName }}</span>
+                    <span class="do-item__sub">S/ {{ item.subtotal.toFixed(2) }}</span>
+                  </div>
+                }
+              </div>
+
+              <!-- Actions -->
+              <div class="do-card__actions">
+                <!-- Payment toggle -->
+                <button class="do-action-btn" [class.do-action-btn--active]="order.isPaid" (click)="togglePayment(order); $event.stopPropagation()">
+                  <span class="material-symbols-outlined">{{ order.isPaid ? 'payments' : 'attach_money' }}</span>
+                  {{ order.isPaid ? 'Pagado' : 'Marcar pagado' }}
+                </button>
+
+                <!-- Status transitions -->
+                @for (status of nextStatuses(order); track status) {
+                  <button
+                    class="do-action-btn"
+                    [class.do-action-btn--danger]="status === 'CANCELLED'"
+                    (click)="updateStatus(order, status); $event.stopPropagation()"
+                  >
+                    {{ STATUS_LABEL[status] }}
+                  </button>
+                }
+              </div>
+            </div>
+          }
+
+        </div>
+      }
+    </div>
+  }
+</div>
