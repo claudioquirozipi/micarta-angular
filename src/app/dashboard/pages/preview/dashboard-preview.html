@@ -1,0 +1,53 @@
+@if (loading()) {
+  <div class="dp-loading">
+    <span class="material-symbols-outlined dp-loading__icon">sync</span> Cargando...
+  </div>
+} @else if (!restaurant()?.slug) {
+  <div class="dp-empty">
+    <span class="material-symbols-outlined dp-empty__icon">storefront</span>
+    <p>Primero configura tu restaurante en <a routerLink="/dashboard/perfil">Perfil</a>.</p>
+  </div>
+} @else {
+  <div class="dp-page">
+
+    <!-- Header -->
+    <div class="dp-header">
+      <div>
+        <h1 class="dp-header__title">Vista previa</h1>
+        <p class="dp-header__sub">Así verán tu carta los clientes al escanear el QR.</p>
+      </div>
+      <a [href]="publicUrl()" target="_blank" rel="noopener noreferrer" class="dp-header__link">
+        Abrir en nueva pestaña
+        <span class="material-symbols-outlined">open_in_new</span>
+      </a>
+    </div>
+
+    <!-- Browser frame -->
+    <div class="dp-frame">
+      <div class="dp-frame__bar">
+        <div class="dp-frame__dots">
+          <span class="dp-frame__dot dp-frame__dot--red"></span>
+          <span class="dp-frame__dot dp-frame__dot--yellow"></span>
+          <span class="dp-frame__dot dp-frame__dot--green"></span>
+        </div>
+        <div class="dp-frame__url">{{ publicUrl() }}</div>
+        <div class="dp-frame__actions">
+          <button class="dp-frame__action-btn" (click)="reload()" title="Recargar">
+            <span class="material-symbols-outlined">refresh</span>
+          </button>
+          <a [href]="publicUrl()" target="_blank" rel="noopener noreferrer" class="dp-frame__action-btn" title="Abrir en nueva pestaña">
+            <span class="material-symbols-outlined">open_in_new</span>
+          </a>
+        </div>
+      </div>
+      <div class="dp-frame__body">
+        <iframe
+          [src]="iframeSrc()"
+          title="Vista previa de tu carta"
+          class="dp-frame__iframe"
+        ></iframe>
+      </div>
+    </div>
+
+  </div>
+}

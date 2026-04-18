@@ -52,7 +52,7 @@ export const routes: Routes = [
       {
         path: 'preview',
         loadComponent: () =>
-          import('./dashboard/pages/home/dashboard-home').then(m => m.DashboardHome), // placeholder
+          import('./dashboard/pages/preview/dashboard-preview').then(m => m.DashboardPreview),
       },
       {
         path: 'qr',
