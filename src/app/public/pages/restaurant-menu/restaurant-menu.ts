@@ -25,7 +25,7 @@ export class RestaurantMenu implements OnInit {
   readonly menu        = signal<PublicMenu | null>(null);
   readonly loading     = signal(true);
   readonly error       = signal('');
-  readonly activeCatId = signal<string | null>(null);
+  readonly activeCatId = signal<string>('all');
   readonly cartOpen    = signal(false);
   readonly cart        = signal<CartEntry[]>([]);
 
@@ -44,7 +44,6 @@ export class RestaurantMenu implements OnInit {
     this.menuSvc.getMenu(slug).subscribe({
       next: data => {
         this.menu.set(data);
-        if (data.categories.length) this.activeCatId.set(data.categories[0].id);
         this.loading.set(false);
       },
       error: () => {
@@ -116,7 +115,10 @@ export class RestaurantMenu implements OnInit {
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msgParts.join('\n'))}`, '_blank');
   }
 
-  activeDishes() {
+  readonly activeDishes = computed(() => {
+    if (this.activeCatId() === 'all') {
+      return this.categories().flatMap(c => c.dishes);
+    }
     return this.categories().find(c => c.id === this.activeCatId())?.dishes ?? [];
-  }
+  });
 }

@@ -1,41 +1,80 @@
-.not-found {
+.nf-page {
   min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: #f9fafb;
+}
+
+.nf-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   text-align: center;
-  padding: 2rem;
-  background: var(--color-background);
+  background: #fff;
+  border: 1px solid #e9eaec;
+  border-radius: 1.5rem;
+  padding: 3rem 2.5rem;
+  max-width: 24rem;
+  width: 100%;
+  box-shadow: 0 4px 24px rgba(0,0,0,.06);
+}
 
-  &__code {
-    font-size: 6rem;
-    font-weight: 700;
-    color: var(--color-primary);
-    line-height: 1;
-    margin-bottom: 1rem;
+.nf-illustration {
+  position: relative;
+  margin-bottom: 1.5rem;
+
+  &__emoji {
+    font-size: 5rem;
+    display: block;
+    filter: grayscale(.2);
   }
+}
 
-  &__title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--color-text);
-    margin-bottom: 0.5rem;
-  }
+.nf-code {
+  position: absolute;
+  bottom: -.25rem;
+  right: -.75rem;
+  font-size: .875rem;
+  font-weight: 700;
+  background: var(--color-primary);
+  color: #fff;
+  padding: .125rem .5rem;
+  border-radius: 999px;
+}
 
-  &__desc {
-    color: var(--color-muted);
-    margin-bottom: 2rem;
-  }
+.nf-title {
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: .5rem;
+}
 
-  &__btn {
-    background: var(--color-primary);
-    color: #fff;
-    font-weight: 600;
-    padding: 0.75rem 2rem;
-    border-radius: 0.75rem;
-    transition: background 0.15s;
+.nf-desc {
+  font-size: .9375rem;
+  color: var(--color-muted);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
 
-    &:hover { background: var(--color-primary-hover); }
+.nf-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .375rem;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: .9375rem;
+  font-weight: 600;
+  padding: .75rem 1.75rem;
+  border-radius: .875rem;
+  text-decoration: none;
+  transition: background .15s, transform .15s;
+
+  .material-symbols-outlined { font-size: 1.125rem; }
+
+  &:hover {
+    background: var(--color-primary-hover);
+    transform: translateY(-1px);
   }
 }
