@@ -145,8 +145,7 @@ export class WaiterBoard implements OnInit, OnDestroy {
       directDelivery: this.directDelivery(),
       items: this.cart().map(i => ({ dishId: i.dishId, quantity: i.quantity })),
     }).subscribe({
-      next: order => {
-        this.orders.update(os => [order, ...os]);
+      next: () => {
         this.cart.set([]);
         this.tableNumber.set('');
         this.notes.set('');
