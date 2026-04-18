@@ -7,6 +7,7 @@ import {
   signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { DomSanitizer } from '@angular/platform-browser';
 import { RestaurantService } from '../../../restaurant/services/restaurant.service';
 
 @Component({
@@ -18,6 +19,7 @@ import { RestaurantService } from '../../../restaurant/services/restaurant.servi
 })
 export class DashboardPreview implements OnInit {
   private restaurantSvc = inject(RestaurantService);
+  private sanitizer     = inject(DomSanitizer);
 
   readonly restaurant = this.restaurantSvc.restaurant;
   readonly loading    = signal(true);
@@ -31,7 +33,8 @@ export class DashboardPreview implements OnInit {
   readonly iframeSrc = computed(() => {
     const url = this.publicUrl();
     const key = this.reloadKey();
-    return url && key > 0 ? `${url}?_r=${key}` : url;
+    const src = url && key > 0 ? `${url}?_r=${key}` : url;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(src);
   });
 
   ngOnInit() {
