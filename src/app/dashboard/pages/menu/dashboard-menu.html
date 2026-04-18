@@ -121,7 +121,7 @@
         <!-- Imagen -->
         <div class="field modal__img-col">
           <label class="field__label">Imagen</label>
-          <button type="button" class="dish-img-upload" [class.dish-img-upload--has-img]="dishImgPreview()" (click)="dishImgInput.click()" [disabled]="dishImgUploading()">
+          <button type="button" class="dish-img-upload" [class.dish-img-upload--has-img]="dishImgPreview()" (click)="dishImgInput.click()" [disabled]="dishImgUploading() || !editingDish()">
             @if (dishImgUploading()) {
               <span class="material-symbols-outlined dish-img-upload__spinner">sync</span>
             } @else if (dishImgPreview()) {

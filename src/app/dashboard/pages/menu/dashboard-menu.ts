@@ -227,20 +227,21 @@ export class DashboardMenu implements OnInit {
   // ── Dish image upload ────────────────────────────────────
 
   onDishImageSelected(event: Event) {
-    const file = (event.target as HTMLInputElement).files?.[0];
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
     if (!file) return;
+    input.value = '';
+
     this.dishImgError.set('');
     if (file.size > MAX_IMG_BYTES) { this.dishImgError.set('Máx. 2 MB.'); return; }
 
-    const reader = new FileReader();
-    reader.onload = () => this.dishImgPreview.set(reader.result as string);
-    reader.readAsDataURL(file);
-
     const editing = this.editingDish();
-    if (!editing) { this.dishImgError.set('Guarda el plato primero para subir la imagen.'); return; }
+    if (!editing) return;
 
     const r = this.restaurant();
     if (!r) return;
+
+    this.dishImgPreview.set(URL.createObjectURL(file));
 
     this.dishImgUploading.set(true);
     this.menuSvc.signDishImageUpload(r.id, editing.id).pipe(
