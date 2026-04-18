@@ -264,11 +264,14 @@
   }
 
   &--pay {
-    background: #f0fdf4; border-color: #86efac; color: #16a34a;
-    &:hover { background: #dcfce7; }
+    background: #fffbeb; border-color: #fcd34d; color: #b45309;
+    &:hover { background: #fef3c7; }
   }
 
-  &--paid { background: #dcfce7; }
+  &--paid {
+    background: #16a34a; border-color: #16a34a; color: #fff;
+    &:hover { background: #15803d; }
+  }
 
   &--danger { color: #dc2626; border-color: #fecaca; background: #fef2f2; &:hover { background: #fee2e2; } }
 }

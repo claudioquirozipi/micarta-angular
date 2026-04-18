@@ -72,7 +72,12 @@
                       {{ order.isPaid ? '✓ Pagado' : 'Marcar pagado' }}
                     </button>
                     @for (status of waiterActions(order); track status) {
-                      <button class="wb-btn" [class.wb-btn--danger]="status === 'CANCELLED'" (click)="updateStatus(order, status)">
+                      <button
+                        class="wb-btn"
+                        [class.wb-btn--danger]="status === 'CANCELLED'"
+                        [disabled]="status === 'FINISHED' && !order.isPaid"
+                        [title]="status === 'FINISHED' && !order.isPaid ? 'Marca la orden como pagada primero' : ''"
+                        (click)="updateStatus(order, status)">
                         {{ STATUS_LABEL[status] }}
                       </button>
                     }
