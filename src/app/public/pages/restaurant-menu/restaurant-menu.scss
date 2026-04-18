@@ -368,3 +368,23 @@
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
+
+// ── Branding footer (free tier) ───────────────────────────
+.pm-brand {
+  text-align: center;
+  padding: 1.25rem 1rem 2rem;
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    gap: .375rem;
+    font-size: .8125rem;
+    color: var(--color-muted);
+    text-decoration: none;
+    transition: color .15s;
+
+    .material-symbols-outlined { font-size: 1rem; }
+    strong { color: var(--color-primary); }
+    &:hover { color: var(--color-text); }
+  }
+}

@@ -37,6 +37,7 @@ export interface PublicRestaurant {
   address:     string | null;
   phone:       string | null;
   schedule:    string | null;
+  isPremium:   boolean;
 }
 
 export interface PublicCategory {

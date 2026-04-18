@@ -62,7 +62,7 @@ export const routes: Routes = [
       {
         path: 'suscripcion',
         loadComponent: () =>
-          import('./dashboard/pages/home/dashboard-home').then(m => m.DashboardHome), // placeholder
+          import('./dashboard/pages/subscription/dashboard-subscription').then(m => m.DashboardSubscription),
       },
     ],
   },

@@ -156,4 +156,13 @@
       </div>
     }
   }
+
+  @if (!restaurant()?.isPremium) {
+    <footer class="pm-brand">
+      <a href="/" class="pm-brand__link">
+        <span class="material-symbols-outlined">qr_code_2</span>
+        Menú digital creado con <strong>MiCarta</strong> · Crea el tuyo gratis
+      </a>
+    </footer>
+  }
 </div>

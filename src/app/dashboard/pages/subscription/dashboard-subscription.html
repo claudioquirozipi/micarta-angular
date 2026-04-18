@@ -1,0 +1,138 @@
+<div class="sub-page">
+
+  @if (loading()) {
+    <div class="sub-loading">Cargando...</div>
+  } @else {
+    @let s = status()!;
+
+    <!-- Estado actual -->
+    <div class="sub-card">
+      <h2 class="sub-card__title">Estado de tu suscripción</h2>
+
+      @if (s.subscribed) {
+        <div class="sub-status sub-status--active">
+          <span class="material-symbols-outlined">check_circle</span>
+          <div>
+            <p class="sub-status__label">{{ s.isInGrace ? 'Período de gracia' : 'Activa' }}</p>
+            <p class="sub-status__date">
+              Vence el {{ s.currentPeriodEnd | date:'d MMM yyyy' : '' : 'es' }}
+              @if (s.isInGrace) { <span class="sub-grace">(quedan 3 días de gracia)</span> }
+            </p>
+          </div>
+        </div>
+
+        @if (s.status === 'ACTIVE' && !showCancel()) {
+          <button class="sub-btn sub-btn--ghost" (click)="showCancel.set(true)">
+            Cancelar suscripción
+          </button>
+        }
+
+        @if (showCancel()) {
+          <div class="sub-cancel-box">
+            <p>¿Seguro que quieres cancelar? Seguirás teniendo acceso hasta el {{ s.currentPeriodEnd | date:'d MMM yyyy' : '' : 'es' }}.</p>
+            <div class="sub-cancel-box__actions">
+              <button class="sub-btn sub-btn--danger" (click)="cancelSubscription()" [disabled]="cancelling()">
+                {{ cancelling() ? 'Cancelando...' : 'Sí, cancelar' }}
+              </button>
+              <button class="sub-btn sub-btn--ghost" (click)="showCancel.set(false)">No, mantener</button>
+            </div>
+          </div>
+        }
+      } @else {
+        <div class="sub-status sub-status--expired">
+          <span class="material-symbols-outlined">cancel</span>
+          <div>
+            <p class="sub-status__label">Sin suscripción activa</p>
+            <p class="sub-status__date">Activa tu plan para usar el sistema de órdenes.</p>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Pago pendiente -->
+    @if (pendingPayment(); as pp) {
+      <div class="sub-card sub-card--pending">
+        <h2 class="sub-card__title">Pago pendiente de confirmación</h2>
+        <p class="sub-pending__detail">
+          <strong>{{ pp.months }} mes{{ pp.months > 1 ? 'es' : '' }}</strong> · S/ {{ pp.amount.toFixed(2) }}
+        </p>
+        <div class="sub-yape-box">
+          <span class="material-symbols-outlined sub-yape-box__icon">smartphone</span>
+          <div>
+            <p class="sub-yape-box__label">Yapea al número</p>
+            <p class="sub-yape-box__number">{{ pp.yapeNumber }}</p>
+            <p class="sub-yape-box__hint">Monto exacto: <strong>S/ {{ pp.amount.toFixed(2) }}</strong></p>
+          </div>
+        </div>
+        <p class="sub-pending__note">
+          Una vez que realices el pago, será confirmado en un máximo de 24 horas.
+        </p>
+      </div>
+    }
+
+    <!-- Nuevo pago -->
+    @if (!pendingPayment()) {
+      <div class="sub-card">
+        <h2 class="sub-card__title">{{ s.subscribed ? 'Extender suscripción' : 'Activar suscripción' }}</h2>
+        <p class="sub-price">S/ {{ s.monthlyPrice }} / mes</p>
+
+        <!-- Selector de método -->
+        <div class="sub-methods">
+          <button class="sub-method-btn" [class.sub-method-btn--active]="payMethod() === 'yape'" (click)="payMethod.set('yape')">
+            <span class="material-symbols-outlined">smartphone</span>
+            Yape
+          </button>
+          <button class="sub-method-btn" [class.sub-method-btn--active]="payMethod() === 'card'" (click)="payMethod.set('card')">
+            <span class="material-symbols-outlined">credit_card</span>
+            Tarjeta
+          </button>
+        </div>
+
+        <!-- Yape: elige meses -->
+        @if (payMethod() === 'yape') {
+          <div class="sub-months">
+            @for (m of monthOptions; track m) {
+              <button
+                class="sub-month-btn"
+                [class.sub-month-btn--active]="selectedMonths() === m"
+                (click)="selectedMonths.set(m)">
+                {{ m }} mes{{ m > 1 ? 'es' : '' }}
+              </button>
+            }
+          </div>
+
+          <div class="sub-total">
+            Total a pagar: <strong>S/ {{ total.toFixed(2) }}</strong>
+          </div>
+
+          <button class="sub-btn sub-btn--primary" (click)="requestYape()" [disabled]="requesting()">
+            <span class="material-symbols-outlined">smartphone</span>
+            {{ requesting() ? 'Generando...' : 'Pagar con Yape' }}
+          </button>
+        }
+
+        <!-- Tarjeta: cobro mensual automático -->
+        @if (payMethod() === 'card') {
+          <p class="sub-card-info">
+            Se te cobrará <strong>S/ {{ s.monthlyPrice.toFixed(2) }}</strong> mensualmente de forma automática.
+            Puedes cancelar cuando quieras.
+          </p>
+
+          @if (cardError()) {
+            <p class="sub-error">{{ cardError() }}</p>
+          }
+
+          <button class="sub-btn sub-btn--primary" (click)="subscribeWithCard()" [disabled]="cardLoading()">
+            <span class="material-symbols-outlined">credit_card</span>
+            {{ cardLoading() ? 'Procesando...' : 'Pagar con tarjeta' }}
+          </button>
+
+          <p class="sub-secure">
+            <span class="material-symbols-outlined">lock</span>
+            Pago seguro procesado por Culqi. No guardamos tus datos de tarjeta.
+          </p>
+        }
+      </div>
+    }
+  }
+</div>
