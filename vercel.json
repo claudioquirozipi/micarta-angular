@@ -1,4 +1,6 @@
 {
+  "buildCommand": "pnpm run build",
+  "outputDirectory": "dist/micarta-angular/browser",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
