@@ -26,6 +26,82 @@
 
   &__title { font-size: 1.125rem; font-weight: 700; color: #f9fafb; }
   &__sub   { font-size: .8125rem; color: #9ca3af; }
+
+  &__tabs {
+    margin-left: auto;
+    display: flex;
+    gap: .375rem;
+  }
+}
+
+.kb-tab-btn {
+  width: 2.25rem; height: 2.25rem;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid #374151; border-radius: .625rem;
+  background: transparent; color: #9ca3af; cursor: pointer;
+  transition: background .15s, color .15s;
+  .material-symbols-outlined { font-size: 1.25rem; }
+
+  &--active { background: #374151; color: #f9fafb; }
+  &:hover   { background: #374151; }
+}
+
+// ── Availability ──────────────────────────────────────────
+.kb-avail {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-y: auto;
+}
+
+.kb-avail-cat {
+  &__title {
+    font-size: .75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: #6b7280;
+    padding-bottom: .5rem;
+    border-bottom: 1px solid #374151;
+    margin-bottom: .5rem;
+  }
+}
+
+.kb-avail-dish {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .75rem;
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-radius: .75rem;
+  margin-bottom: .375rem;
+  transition: opacity .2s;
+
+  &--off { opacity: .5; }
+
+  &__info { display: flex; flex-direction: column; gap: .125rem; }
+  &__name   { font-size: .9375rem; font-weight: 500; color: #f9fafb; }
+  &__status { font-size: .8125rem; color: #9ca3af; }
+}
+
+.kb-avail-toggle {
+  width: 2.75rem; height: 1.5rem; border-radius: 999px;
+  background: #374151; border: none; cursor: pointer;
+  position: relative; transition: background .2s; flex-shrink: 0;
+
+  &--on { background: #059669; }
+  &:disabled { opacity: .5; cursor: not-allowed; }
+
+  &__thumb {
+    position: absolute; top: .1875rem; left: .1875rem;
+    width: 1.125rem; height: 1.125rem; border-radius: 50%; background: #fff;
+    transition: transform .2s; display: block;
+    box-shadow: 0 1px 3px rgba(0,0,0,.3);
+  }
+
+  &--on &__thumb { transform: translateX(1.25rem); }
 }
 
 // ── Board ─────────────────────────────────────────────────

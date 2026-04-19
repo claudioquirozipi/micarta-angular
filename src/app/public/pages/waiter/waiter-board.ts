@@ -9,6 +9,7 @@ import { AuthService } from '../../../auth/services/auth.service';
 import { OrderService } from '../../../orders/order.service';
 import { OrderSseService } from '../../../orders/order-sse.service';
 import { PublicMenuService } from '../../../menu/public-menu.service';
+import { MenuService } from '../../../menu/menu.service';
 import {
   MemberAccess, Order, OrderStatus,
   STATUS_COLOR, STATUS_LABEL,
@@ -16,6 +17,8 @@ import {
 import { PublicCategory } from '../../../menu/menu.model';
 
 interface CartItem { dishId: string; dishName: string; dishPrice: number; quantity: number; }
+interface StaffDish { id: string; name: string; price: number; isAvailable: boolean; }
+interface StaffCategory { id: string; name: string; dishes: StaffDish[]; }
 
 @Component({
   selector: 'app-waiter-board',
@@ -31,21 +34,27 @@ export class WaiterBoard implements OnInit, OnDestroy {
   private orderSvc = inject(OrderService);
   private sseSvc   = inject(OrderSseService);
   private menuSvc  = inject(PublicMenuService);
+  private staffSvc = inject(MenuService);
 
   readonly loading    = signal(true);
   readonly error      = signal('');
   readonly access     = signal<MemberAccess | null>(null);
   readonly orders     = signal<Order[]>([]);
-  readonly activeTab  = signal<'orders' | 'new'>('orders');
+  readonly activeTab  = signal<'orders' | 'new' | 'availability'>('orders');
   readonly expanded   = signal<string | null>(null);
 
-  readonly categories = signal<PublicCategory[]>([]);
-  readonly activeCatId = signal<string | null>(null);
-  readonly cart       = signal<CartItem[]>([]);
-  readonly tableNumber = signal('');
-  readonly notes       = signal('');
+  // Nueva orden
+  readonly categories   = signal<PublicCategory[]>([]);
+  readonly activeCatId  = signal<string | null>(null);
+  readonly cart         = signal<CartItem[]>([]);
+  readonly tableNumber  = signal('');
+  readonly notes        = signal('');
   readonly directDelivery = signal(false);
-  readonly saving     = signal(false);
+  readonly saving       = signal(false);
+
+  // Disponibilidad
+  readonly staffCategories = signal<StaffCategory[]>([]);
+  readonly togglingDish    = signal<string | null>(null);
 
   readonly STATUS_LABEL = STATUS_LABEL;
   readonly STATUS_COLOR = STATUS_COLOR;
@@ -80,6 +89,7 @@ export class WaiterBoard implements OnInit, OnDestroy {
         this.access.set(access);
         this.fetchOrders(access.id);
         this.loadMenu(slug);
+        this.loadStaffMenu(access.id);
         this.sseSub = this.sseSvc.connect(access.id).subscribe({
           next: ({ event, data }) => {
             if (event === 'order.created') {
@@ -110,7 +120,13 @@ export class WaiterBoard implements OnInit, OnDestroy {
     });
   }
 
-  setTab(tab: 'orders' | 'new') { this.activeTab.set(tab); }
+  private loadStaffMenu(restaurantId: string) {
+    this.staffSvc.getStaffCategories(restaurantId).subscribe(cats => {
+      this.staffCategories.set(cats as StaffCategory[]);
+    });
+  }
+
+  setTab(tab: 'orders' | 'new' | 'availability') { this.activeTab.set(tab); }
   toggle(id: string) { this.expanded.set(this.expanded() === id ? null : id); }
   selectCat(id: string) { this.activeCatId.set(id); }
 
@@ -133,6 +149,24 @@ export class WaiterBoard implements OnInit, OnDestroy {
   }
 
   getQty(dishId: string) { return this.cart().find(i => i.dishId === dishId)?.quantity ?? 0; }
+
+  toggleDishAvailability(dish: StaffDish) {
+    const access = this.access();
+    if (!access || this.togglingDish()) return;
+    this.togglingDish.set(dish.id);
+    this.staffSvc.toggleAvailability(access.id, dish.id, !dish.isAvailable).subscribe({
+      next: updated => {
+        this.staffCategories.update(cats =>
+          cats.map(c => ({
+            ...c,
+            dishes: c.dishes.map(d => d.id === updated.id ? { ...d, isAvailable: updated.isAvailable } : d),
+          })),
+        );
+        this.togglingDish.set(null);
+      },
+      error: () => this.togglingDish.set(null),
+    });
+  }
 
   submitOrder() {
     const access = this.access();

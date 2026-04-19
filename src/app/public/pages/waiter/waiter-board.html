@@ -28,6 +28,10 @@
         <span class="material-symbols-outlined">add_circle</span>
         Nueva orden
       </button>
+      <button class="wb-tabs__btn" [class.wb-tabs__btn--active]="activeTab() === 'availability'" (click)="setTab('availability')">
+        <span class="material-symbols-outlined">toggle_on</span>
+        Carta
+      </button>
     </div>
 
     <!-- ── Orders tab ── -->
@@ -154,6 +158,36 @@
               {{ saving() ? 'Enviando...' : 'Enviar orden' }}
             </button>
           </div>
+        }
+      </div>
+    }
+
+    <!-- ── Availability tab ── -->
+    @if (activeTab() === 'availability') {
+      <div class="wb-avail">
+        @if (!staffCategories().length) {
+          <div class="wb-empty"><span class="material-symbols-outlined wb-empty__icon">menu_book</span><p>Sin categorías.</p></div>
+        } @else {
+          @for (cat of staffCategories(); track cat.id) {
+            <div class="wb-avail-cat">
+              <h3 class="wb-avail-cat__title">{{ cat.name }}</h3>
+              @for (dish of cat.dishes; track dish.id) {
+                <div class="wb-avail-dish" [class.wb-avail-dish--off]="!dish.isAvailable">
+                  <div class="wb-avail-dish__info">
+                    <span class="wb-avail-dish__name">{{ dish.name }}</span>
+                    <span class="wb-avail-dish__price">S/ {{ dish.price.toFixed(2) }}</span>
+                  </div>
+                  <button
+                    class="wb-avail-toggle"
+                    [class.wb-avail-toggle--on]="dish.isAvailable"
+                    [disabled]="togglingDish() === dish.id"
+                    (click)="toggleDishAvailability(dish)">
+                    <span class="wb-avail-toggle__thumb"></span>
+                  </button>
+                </div>
+              }
+            </div>
+          }
         }
       </div>
     }

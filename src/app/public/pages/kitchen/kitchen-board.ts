@@ -8,7 +8,11 @@ import { Subscription } from 'rxjs';
 import { AuthService } from '../../../auth/services/auth.service';
 import { OrderService } from '../../../orders/order.service';
 import { OrderSseService } from '../../../orders/order-sse.service';
+import { MenuService } from '../../../menu/menu.service';
 import { MemberAccess, Order } from '../../../orders/order.model';
+
+interface StaffDish { id: string; name: string; price: number; isAvailable: boolean; }
+interface StaffCategory { id: string; name: string; dishes: StaffDish[]; }
 
 @Component({
   selector: 'app-kitchen-board',
@@ -23,14 +27,19 @@ export class KitchenBoard implements OnInit, OnDestroy {
   private authSvc  = inject(AuthService);
   private orderSvc = inject(OrderService);
   private sseSvc   = inject(OrderSseService);
+  private menuSvc  = inject(MenuService);
 
-  readonly loading = signal(true);
-  readonly error   = signal('');
-  readonly access  = signal<MemberAccess | null>(null);
-  readonly orders  = signal<Order[]>([]);
+  readonly loading  = signal(true);
+  readonly error    = signal('');
+  readonly access   = signal<MemberAccess | null>(null);
+  readonly orders   = signal<Order[]>([]);
+  readonly activeTab = signal<'orders' | 'availability'>('orders');
 
-  readonly pending  = computed(() => this.orders().filter(o => o.status === 'PENDING'));
-  readonly cooking  = computed(() => this.orders().filter(o => o.status === 'COOKING'));
+  readonly staffCategories = signal<StaffCategory[]>([]);
+  readonly togglingDish    = signal<string | null>(null);
+
+  readonly pending = computed(() => this.orders().filter(o => o.status === 'PENDING'));
+  readonly cooking = computed(() => this.orders().filter(o => o.status === 'COOKING'));
 
   private sseSub: Subscription | null = null;
   private prevPendingIds = new Set<string>();
@@ -50,6 +59,7 @@ export class KitchenBoard implements OnInit, OnDestroy {
         }
         this.access.set(access);
         this.fetchOrders(access.id);
+        this.loadStaffMenu(access.id);
         this.sseSub = this.sseSvc.connect(access.id).subscribe({
           next: ({ event, data }) => {
             if (event === 'order.created' && (data.status === 'PENDING' || data.status === 'COOKING')) {
@@ -91,10 +101,36 @@ export class KitchenBoard implements OnInit, OnDestroy {
     });
   }
 
+  private loadStaffMenu(restaurantId: string) {
+    this.menuSvc.getStaffCategories(restaurantId).subscribe(cats => {
+      this.staffCategories.set(cats as StaffCategory[]);
+    });
+  }
+
+  setTab(tab: 'orders' | 'availability') { this.activeTab.set(tab); }
+
+  toggleDishAvailability(dish: StaffDish) {
+    const access = this.access();
+    if (!access || this.togglingDish()) return;
+    this.togglingDish.set(dish.id);
+    this.menuSvc.toggleAvailability(access.id, dish.id, !dish.isAvailable).subscribe({
+      next: updated => {
+        this.staffCategories.update(cats =>
+          cats.map(c => ({
+            ...c,
+            dishes: c.dishes.map(d => d.id === updated.id ? { ...d, isAvailable: updated.isAvailable } : d),
+          })),
+        );
+        this.togglingDish.set(null);
+      },
+      error: () => this.togglingDish.set(null),
+    });
+  }
+
   private playSound() {
     try {
-      const ctx = new AudioContext();
-      const osc = ctx.createOscillator();
+      const ctx  = new AudioContext();
+      const osc  = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain);
       gain.connect(ctx.destination);

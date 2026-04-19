@@ -23,6 +23,12 @@ export class MenuService {
     return this.http.get<Category[]>(`${API}/restaurants/${restaurantId}/categories`);
   }
 
+  getStaffCategories(restaurantId: string) {
+    return this.http.get<{ id: string; name: string; dishes: { id: string; name: string; price: number; isAvailable: boolean }[] }[]>(
+      `${API}/restaurants/${restaurantId}/categories/staff`,
+    );
+  }
+
   createCategory(restaurantId: string, dto: CreateCategoryDto) {
     return this.http.post<Category>(`${API}/restaurants/${restaurantId}/categories`, dto);
   }
