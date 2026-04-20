@@ -71,6 +71,20 @@
         {{ item.label }}
       </a>
     }
+    @if (staffItems().length) {
+      <p class="sidebar__section-label">Staff</p>
+      @for (item of staffItems(); track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="sidebar__link--active"
+          class="sidebar__link sidebar__link--staff"
+          (click)="closeDrawer()"
+        >
+          <span class="material-symbols-outlined sidebar__icon">{{ item.icon }}</span>
+          {{ item.label }}
+        </a>
+      }
+    }
   </nav>
 
   <div class="sidebar__footer">
