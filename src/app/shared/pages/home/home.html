@@ -1,47 +1,257 @@
 <div class="page">
 
-  <!-- Header -->
+  <!-- ── Header ── -->
   <header class="header">
-    <span class="logo">Mi<span class="logo__accent">Carta</span></span>
+    <a routerLink="/" class="logo">Mi<span class="logo__accent">Carta</span></a>
     <nav class="nav">
       <a routerLink="/login" class="nav__link">Ingresar</a>
       <a routerLink="/register" class="nav__btn">Comenzar gratis</a>
     </nav>
   </header>
 
-  <!-- Hero -->
-  <main class="main">
-    <div class="hero">
-      <span class="hero__badge">14 días gratis · Sin tarjeta de crédito</span>
+  <!-- ── Hero ── -->
+  <section class="hero">
+    <div class="hero__inner">
+      <span class="badge">14 días gratis · Sin tarjeta de crédito</span>
+
       <h1 class="hero__title">
-        La carta digital con QR<br />
-        <span class="hero__title--accent">para tu restaurante</span>
+        Tu restaurante con<br />
+        <span class="hero__title--accent">carta digital y QR</span><br />
+        en menos de 10 minutos
       </h1>
+
       <p class="hero__desc">
-        Crea tu menú digital en minutos, genera un código QR y ponlo en tus mesas.
-        Tus clientes escanean y ven tu carta al instante. Solo S/ 50 al mes.
+        Crea tu menú digital, genera un QR para tus mesas y gestiona
+        los pedidos de tu equipo en tiempo real. Todo desde el celular.
       </p>
+
       <div class="hero__actions">
-        <a routerLink="/register" class="btn btn--primary">Crear mi carta gratis</a>
-        <a routerLink="/login" class="btn btn--outline">Ya tengo cuenta</a>
+        <a routerLink="/register" class="btn btn--primary btn--lg">
+          Crear mi carta gratis
+        </a>
+        <a routerLink="/login" class="btn btn--ghost btn--lg">Ya tengo cuenta →</a>
+      </div>
+
+      <p class="hero__note">Solo S/ 50 al mes después de los 14 días · Cancela cuando quieras</p>
+
+      <!-- Visual mockup -->
+      <div class="hero__mockup">
+        <div class="phone">
+          <div class="phone__screen">
+            <div class="phone__header">
+              <span class="phone__dot"></span>
+              <span class="phone__restaurant">La Buena Sazón</span>
+            </div>
+            <div class="phone__category">🍲 Fondos</div>
+            <div class="phone__item">
+              <div class="phone__item-info">
+                <span class="phone__item-name">Lomo Saltado</span>
+                <span class="phone__item-price">S/ 28</span>
+              </div>
+              <button class="phone__item-add">+</button>
+            </div>
+            <div class="phone__item">
+              <div class="phone__item-info">
+                <span class="phone__item-name">Ají de Gallina</span>
+                <span class="phone__item-price">S/ 22</span>
+              </div>
+              <button class="phone__item-add">+</button>
+            </div>
+            <div class="phone__item">
+              <div class="phone__item-info">
+                <span class="phone__item-name">Ceviche Mixto</span>
+                <span class="phone__item-price">S/ 35</span>
+              </div>
+              <button class="phone__item-add">+</button>
+            </div>
+            <div class="phone__category">🥤 Bebidas</div>
+            <div class="phone__item">
+              <div class="phone__item-info">
+                <span class="phone__item-name">Chicha Morada</span>
+                <span class="phone__item-price">S/ 8</span>
+              </div>
+              <button class="phone__item-add">+</button>
+            </div>
+            <div class="phone__cart">
+              <span>🛒 Ver pedido (2 platos)</span>
+              <span class="phone__cart-total">S/ 56</span>
+            </div>
+          </div>
+        </div>
+        <div class="qr-card">
+          <div class="qr-card__code">
+            <div class="qr-grid">
+              @for (cell of qrCells; track $index) {
+                <div class="qr-cell" [class.qr-cell--filled]="cell"></div>
+              }
+            </div>
+          </div>
+          <p class="qr-card__label">Escanéame</p>
+        </div>
       </div>
     </div>
+  </section>
 
-    <!-- Cards -->
-    <div class="cards">
-      @for (step of steps; track step.title) {
-        <div class="card">
-          <div class="card__icon">{{ step.icon }}</div>
-          <h3 class="card__title">{{ step.title }}</h3>
-          <p class="card__desc">{{ step.desc }}</p>
-        </div>
-      }
+  <!-- ── Problema ── -->
+  <section class="problem">
+    <div class="container">
+      <h2 class="section__title">¿Aún repartes cartas de papel?</h2>
+      <p class="section__sub">Estos problemas cuestan tiempo y clientes cada día</p>
+      <div class="pain-grid">
+        @for (pain of pains; track pain.text) {
+          <div class="pain-card">
+            <span class="pain-card__icon">{{ pain.icon }}</span>
+            <p class="pain-card__text">{{ pain.text }}</p>
+          </div>
+        }
+      </div>
     </div>
-  </main>
+  </section>
 
-  <!-- Footer -->
+  <!-- ── Cómo funciona ── -->
+  <section class="how">
+    <div class="container">
+      <span class="section__tag">Cómo funciona</span>
+      <h2 class="section__title">Listo en 3 pasos simples</h2>
+      <div class="steps">
+        @for (step of steps; track step.title) {
+          <div class="step">
+            <div class="step__number">{{ $index + 1 }}</div>
+            <div class="step__icon">{{ step.icon }}</div>
+            <h3 class="step__title">{{ step.title }}</h3>
+            <p class="step__desc">{{ step.desc }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Features ── -->
+  <section class="features">
+    <div class="container">
+      <span class="section__tag">Funcionalidades</span>
+      <h2 class="section__title">Todo lo que tu restaurante necesita</h2>
+      <div class="features-grid">
+        @for (feat of features; track feat.title) {
+          <div class="feat-card">
+            <div class="feat-card__icon">{{ feat.icon }}</div>
+            <h3 class="feat-card__title">{{ feat.title }}</h3>
+            <p class="feat-card__desc">{{ feat.desc }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Para tu equipo ── -->
+  <section class="roles">
+    <div class="container">
+      <span class="section__tag">Roles y equipo</span>
+      <h2 class="section__title">Diseñado para toda tu brigada</h2>
+      <p class="section__sub">Cada miembro del equipo tiene su panel según su rol</p>
+      <div class="roles-grid">
+        @for (role of roles; track role.name) {
+          <div class="role-card">
+            <div class="role-card__header">
+              <span class="role-card__icon">{{ role.icon }}</span>
+              <h3 class="role-card__name">{{ role.name }}</h3>
+            </div>
+            <ul class="role-card__list">
+              @for (item of role.items; track item) {
+                <li class="role-card__item">
+                  <span class="role-card__check">✓</span> {{ item }}
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Pricing ── -->
+  <section class="pricing">
+    <div class="container">
+      <span class="section__tag">Precio</span>
+      <h2 class="section__title">Un solo plan, sin sorpresas</h2>
+      <p class="section__sub">Todo incluido desde el primer día</p>
+
+      <div class="price-card">
+        <div class="price-card__badge">Más popular</div>
+        <div class="price-card__amount">
+          <span class="price-card__currency">S/</span>
+          <span class="price-card__number">50</span>
+          <span class="price-card__period">/mes</span>
+        </div>
+        <p class="price-card__trial">Primeros 14 días gratis · Sin tarjeta de crédito</p>
+
+        <ul class="price-card__list">
+          @for (item of priceItems; track item) {
+            <li class="price-card__item">
+              <span class="price-card__check">✓</span> {{ item }}
+            </li>
+          }
+        </ul>
+
+        <a routerLink="/register" class="btn btn--primary btn--full btn--lg">
+          Comenzar gratis 14 días
+        </a>
+        <p class="price-card__cancel">Cancela cuando quieras · Sin permanencia</p>
+
+        <div class="price-card__payments">
+          <span class="price-card__pay-label">Métodos de pago:</span>
+          <span class="price-card__pay-method">💜 Yape</span>
+          <span class="price-card__pay-method">💳 Tarjeta</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FAQ ── -->
+  <section class="faq">
+    <div class="container">
+      <h2 class="section__title">Preguntas frecuentes</h2>
+      <div class="faq-list">
+        @for (item of faqs; track item.q; let i = $index) {
+          <div class="faq-item" [class.faq-item--open]="openFaq() === i" (click)="toggleFaq(i)">
+            <div class="faq-item__q">
+              <span>{{ item.q }}</span>
+              <span class="faq-item__arrow">{{ openFaq() === i ? '▲' : '▼' }}</span>
+            </div>
+            @if (openFaq() === i) {
+              <p class="faq-item__a">{{ item.a }}</p>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA final ── -->
+  <section class="cta-final">
+    <div class="container">
+      <h2 class="cta-final__title">
+        Tu carta digital te espera.<br />
+        <span class="cta-final__accent">Empieza hoy, gratis.</span>
+      </h2>
+      <p class="cta-final__desc">
+        14 días para probar todo sin pagar nada. Sin tarjeta de crédito.<br />
+        Si no te convence, no pierdes nada.
+      </p>
+      <a routerLink="/register" class="btn btn--primary btn--lg">
+        Crear mi carta gratis →
+      </a>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
   <footer class="footer">
-    © {{ currentYear }} micartaApp · Menú digital para restaurantes peruanos
+    <div class="footer__inner">
+      <span class="logo">Mi<span class="logo__accent">Carta</span></span>
+      <span class="footer__sep">·</span>
+      <span class="footer__tagline">Menú digital para restaurantes peruanos</span>
+    </div>
+    <p class="footer__copy">© {{ currentYear }} micartaApp · Todos los derechos reservados</p>
   </footer>
 
 </div>
