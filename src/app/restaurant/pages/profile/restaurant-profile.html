@@ -1,8 +1,9 @@
 <div class="rp-page">
-
   <div class="rp-header">
     <h1 class="rp-header__title">Perfil del restaurante</h1>
-    <p class="rp-header__sub">Esta información aparecerá en la carta digital que verán tus clientes.</p>
+    <p class="rp-header__sub">
+      Esta información aparecerá en la carta digital que verán tus clientes.
+    </p>
   </div>
 
   @if (loading()) {
@@ -12,7 +13,6 @@
     </div>
   } @else {
     <form [formGroup]="form" (ngSubmit)="submit()" class="rp-form" novalidate>
-
       @if (success()) {
         <div class="rp-alert rp-alert--success">
           <span class="material-symbols-outlined">check_circle</span>
@@ -95,7 +95,7 @@
           <div class="field rp-grid__full">
             <label class="field__label" for="slug">URL de tu carta</label>
             <div class="field__slug-wrap">
-              <span class="field__slug-prefix">micarta.pe/</span>
+              <span class="field__slug-prefix">micartaapp.com/</span>
               <input
                 id="slug"
                 type="text"
@@ -131,23 +131,43 @@
         <div class="rp-grid rp-grid--2col">
           <div class="field">
             <label class="field__label" for="address">Dirección</label>
-            <input id="address" type="text" formControlName="address"
-              placeholder="Av. Larco 123, Miraflores" class="field__input" />
+            <input
+              id="address"
+              type="text"
+              formControlName="address"
+              placeholder="Av. Larco 123, Miraflores"
+              class="field__input"
+            />
           </div>
           <div class="field">
             <label class="field__label" for="phone">Teléfono</label>
-            <input id="phone" type="tel" formControlName="phone"
-              placeholder="01 234 5678" class="field__input" />
+            <input
+              id="phone"
+              type="tel"
+              formControlName="phone"
+              placeholder="01 234 5678"
+              class="field__input"
+            />
           </div>
           <div class="field">
             <label class="field__label" for="whatsapp">WhatsApp</label>
-            <input id="whatsapp" type="tel" formControlName="whatsapp"
-              placeholder="51 999 888 777" class="field__input" />
+            <input
+              id="whatsapp"
+              type="tel"
+              formControlName="whatsapp"
+              placeholder="51 999 888 777"
+              class="field__input"
+            />
           </div>
           <div class="field">
             <label class="field__label" for="schedule">Horario</label>
-            <input id="schedule" type="text" formControlName="schedule"
-              placeholder="Lun–Vie 12:00–22:00" class="field__input" />
+            <input
+              id="schedule"
+              type="text"
+              formControlName="schedule"
+              placeholder="Lun–Vie 12:00–22:00"
+              class="field__input"
+            />
           </div>
         </div>
       </section>
@@ -181,7 +201,9 @@
           <div class="rp-owner">
             <span class="material-symbols-outlined rp-owner__icon">person</span>
             <div>
-              <p class="rp-owner__name">{{ restaurant()!.owner.name ?? restaurant()!.owner.email }}</p>
+              <p class="rp-owner__name">
+                {{ restaurant()!.owner.name ?? restaurant()!.owner.email }}
+              </p>
               <p class="rp-owner__email">{{ restaurant()!.owner.email }}</p>
             </div>
             <span class="rp-owner__badge">Dueño</span>
@@ -199,7 +221,6 @@
           }
         </button>
       </div>
-
     </form>
   }
 </div>

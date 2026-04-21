@@ -71,7 +71,7 @@ export class SubscriptionService {
 
       window.Culqi.publicKey = culqiPublicKey;
       window.Culqi.settings({
-        title:       'MiCarta',
+        title:       'micartaApp',
         currency:    'PEN',
         description: 'Suscripción mensual',
         amount:      Math.round(amountSoles * 100), // en céntimos
