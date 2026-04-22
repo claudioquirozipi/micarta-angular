@@ -16,48 +16,26 @@ export class Home {
     this.openFaq.set(this.openFaq() === i ? null : i);
   }
 
-  // QR visual decoration — decorative pattern
-  readonly qrCells: boolean[] = (() => {
-    const p = [
-      1,1,1,1,1,1,1,0,1,1,0,1,0,0,1,1,1,1,1,1,1,
-      1,0,0,0,0,0,1,0,0,1,1,0,0,0,1,0,0,0,0,0,1,
-      1,0,1,1,1,0,1,0,1,0,1,1,0,0,1,0,1,1,1,0,1,
-      1,0,1,1,1,0,1,0,0,1,0,1,1,0,1,0,1,1,1,0,1,
-      1,0,1,1,1,0,1,0,1,1,0,0,1,0,1,0,1,1,1,0,1,
-      1,0,0,0,0,0,1,0,0,0,1,1,0,0,1,0,0,0,0,0,1,
-      1,1,1,1,1,1,1,0,1,0,1,0,1,0,1,1,1,1,1,1,1,
-      0,0,0,0,0,0,0,0,1,1,0,1,1,0,0,0,0,0,0,0,0,
-      1,0,1,0,1,1,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,
-      0,1,0,1,1,0,0,0,1,0,1,1,0,0,1,0,0,1,0,1,1,
-      1,1,0,1,0,1,1,0,1,1,0,0,1,1,1,0,1,0,1,0,1,
-      0,0,1,0,1,0,0,1,0,1,1,0,0,1,0,1,0,1,0,1,0,
-      1,0,1,1,0,1,1,0,1,0,1,1,0,0,1,1,0,1,1,0,1,
-      0,0,0,0,0,0,0,0,1,0,0,1,1,0,0,1,0,0,1,1,0,
-      1,1,1,1,1,1,1,0,0,1,1,0,1,0,1,0,1,1,0,0,1,
-      1,0,0,0,0,0,1,0,1,1,0,0,0,1,0,0,1,0,1,0,0,
-      1,0,1,1,1,0,1,0,1,0,1,1,0,0,1,1,0,1,0,1,1,
-      1,0,1,1,1,0,1,0,0,1,1,0,1,1,0,0,1,1,0,1,0,
-      1,0,1,1,1,0,1,1,1,0,0,1,0,1,1,0,1,0,1,1,0,
-      1,0,0,0,0,0,1,0,0,1,1,0,0,0,0,1,0,0,1,0,1,
-      1,1,1,1,1,1,1,1,0,1,0,1,1,0,1,1,0,1,0,1,0,
-    ];
-    return p.map(v => v === 1);
-  })();
-
   readonly pains = [
     { icon: '📋', text: 'Imprimir cartas cada vez que cambia el precio cuesta tiempo y dinero' },
     { icon: '😷', text: 'Las cartas de papel pasan por decenas de manos y acumulan gérmenes' },
     { icon: '📲', text: 'Gestionar pedidos por WhatsApp genera confusión y errores en la cocina' },
-    { icon: '👨‍🍳', text: 'Sin sistema, cocina y mozos no están sincronizados y los platos se demoran' },
+    {
+      icon: '👨‍🍳',
+      text: 'Sin sistema, cocina y mozos no están sincronizados y los platos se demoran',
+    },
     { icon: '😤', text: 'No saber qué platos están agotados hasta que el cliente ya lo pidió' },
-    { icon: '📊', text: 'Sin datos históricos de pedidos ni control de lo que más se vende' },
+    {
+      icon: '📊',
+      text: 'Sin un sistema compartido, cocina y mozos se descoordinan y los pedidos se pierden o llegan mal',
+    },
   ];
 
   readonly steps = [
     {
       icon: '🍽️',
-      title: 'Crea tu carta',
-      desc: 'Agrega categorías, platos, fotos, precios y descripciones en minutos. Sin conocimientos técnicos.',
+      title: 'Crea tu cuenta y sube tu carta',
+      desc: 'Regístrate, configura el perfil de tu restaurante y agrega tus platos con fotos, precios y descripciones. Todo en minutos.',
     },
     {
       icon: '📱',
@@ -100,7 +78,7 @@ export class Home {
     {
       icon: '🔗',
       title: 'Link y QR únicos',
-      desc: 'Tu carta tiene una URL propia (micarta.pe/tu-restaurante) que puedes compartir en redes o por WhatsApp.',
+      desc: 'Tu carta tiene una URL propia (micartaapp.com/tu-restaurante) que puedes compartir en redes o por WhatsApp.',
     },
     {
       icon: '📸',
@@ -114,8 +92,9 @@ export class Home {
     },
     {
       icon: '💳',
-      title: 'Pago con Yape o tarjeta',
-      desc: 'Suscríbete como más te convenga: con Yape o tarjeta de crédito/débito. Seguro y sin sorpresas.',
+      title: 'Múltiples métodos de pago',
+      desc: 'Acepta pagos con Yape, tarjeta de crédito o débito directo desde la app. Seguro y sin sorpresas.',
+      soon: true,
     },
   ];
 
@@ -160,18 +139,11 @@ export class Home {
     'Gestión de pedidos en tiempo real',
     'Panel de cocina (Kanban)',
     'Panel de mozo',
-    'Equipo ilimitado (mozos y cocineros)',
     'Fotos de platos',
     'URL y QR personalizados',
-    'Pago con Yape o tarjeta',
-    'Soporte incluido',
   ];
 
   readonly faqs = [
-    {
-      q: '¿Necesito saber programar o tener conocimientos técnicos?',
-      a: 'No. micartaApp está diseñado para que cualquier restaurante lo use sin ayuda técnica. En menos de 10 minutos tienes tu carta digital lista.',
-    },
     {
       q: '¿Mis clientes necesitan descargar alguna app?',
       a: 'No. Tus clientes solo escanean el código QR con la cámara de su celular y ven el menú directamente en el navegador. Sin apps, sin registros.',

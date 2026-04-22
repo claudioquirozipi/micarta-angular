@@ -1,8 +1,7 @@
 <div class="page">
-
   <!-- ── Header ── -->
   <header class="header">
-    <a routerLink="/" class="logo">Mi<span class="logo__accent">Carta</span></a>
+    <a routerLink="/" class="logo">micarta<span class="logo__accent">App</span></a>
     <nav class="nav">
       <a routerLink="/login" class="nav__link">Ingresar</a>
       <a routerLink="/register" class="nav__btn">Comenzar gratis</a>
@@ -21,14 +20,12 @@
       </h1>
 
       <p class="hero__desc">
-        Crea tu menú digital, genera un QR para tus mesas y gestiona
-        los pedidos de tu equipo en tiempo real. Todo desde el celular.
+        Crea tu menú digital, genera un QR para tus mesas y gestiona los pedidos de tu equipo en
+        tiempo real. Todo desde el celular.
       </p>
 
       <div class="hero__actions">
-        <a routerLink="/register" class="btn btn--primary btn--lg">
-          Crear mi carta gratis
-        </a>
+        <a routerLink="/register" class="btn btn--primary btn--lg"> Crear mi carta gratis </a>
         <a routerLink="/login" class="btn btn--ghost btn--lg">Ya tengo cuenta →</a>
       </div>
 
@@ -80,13 +77,9 @@
         </div>
         <div class="qr-card">
           <div class="qr-card__code">
-            <div class="qr-grid">
-              @for (cell of qrCells; track $index) {
-                <div class="qr-cell" [class.qr-cell--filled]="cell"></div>
-              }
-            </div>
+            <img src="QR-demo.png" alt="QR de demo micartaApp" class="qr-card__img" />
           </div>
-          <p class="qr-card__label">Escanéame</p>
+          <p class="qr-card__label">Ver demo →</p>
         </div>
       </div>
     </div>
@@ -133,7 +126,10 @@
       <h2 class="section__title">Todo lo que tu restaurante necesita</h2>
       <div class="features-grid">
         @for (feat of features; track feat.title) {
-          <div class="feat-card">
+          <div class="feat-card" [class.feat-card--soon]="feat.soon">
+            @if (feat.soon) {
+              <span class="feat-card__soon">Próximamente</span>
+            }
             <div class="feat-card__icon">{{ feat.icon }}</div>
             <h3 class="feat-card__title">{{ feat.title }}</h3>
             <p class="feat-card__desc">{{ feat.desc }}</p>
@@ -158,9 +154,7 @@
             </div>
             <ul class="role-card__list">
               @for (item of role.items; track item) {
-                <li class="role-card__item">
-                  <span class="role-card__check">✓</span> {{ item }}
-                </li>
+                <li class="role-card__item"><span class="role-card__check">✓</span> {{ item }}</li>
               }
             </ul>
           </div>
@@ -187,9 +181,7 @@
 
         <ul class="price-card__list">
           @for (item of priceItems; track item) {
-            <li class="price-card__item">
-              <span class="price-card__check">✓</span> {{ item }}
-            </li>
+            <li class="price-card__item"><span class="price-card__check">✓</span> {{ item }}</li>
           }
         </ul>
 
@@ -198,11 +190,13 @@
         </a>
         <p class="price-card__cancel">Cancela cuando quieras · Sin permanencia</p>
 
+        <!-- Métodos de pago — activar cuando esté configurado
         <div class="price-card__payments">
           <span class="price-card__pay-label">Métodos de pago:</span>
           <span class="price-card__pay-method">💜 Yape</span>
           <span class="price-card__pay-method">💳 Tarjeta</span>
         </div>
+        -->
       </div>
     </div>
   </section>
@@ -238,20 +232,17 @@
         14 días para probar todo sin pagar nada. Sin tarjeta de crédito.<br />
         Si no te convence, no pierdes nada.
       </p>
-      <a routerLink="/register" class="btn btn--primary btn--lg">
-        Crear mi carta gratis →
-      </a>
+      <a routerLink="/register" class="btn btn--primary btn--lg"> Crear mi carta gratis → </a>
     </div>
   </section>
 
   <!-- ── Footer ── -->
   <footer class="footer">
     <div class="footer__inner">
-      <span class="logo">Mi<span class="logo__accent">Carta</span></span>
+      <span class="logo">micarta<span class="logo__accent">App</span></span>
       <span class="footer__sep">·</span>
       <span class="footer__tagline">Menú digital para restaurantes peruanos</span>
     </div>
     <p class="footer__copy">© {{ currentYear }} micartaApp · Todos los derechos reservados</p>
   </footer>
-
 </div>
