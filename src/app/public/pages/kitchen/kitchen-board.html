@@ -12,19 +12,9 @@
         <h1 class="kb-header__title">{{ access()!.name }}</h1>
         <p class="kb-header__sub">Panel de cocina</p>
       </div>
-      <div class="kb-header__tabs">
-        <button class="kb-tab-btn" [class.kb-tab-btn--active]="activeTab() === 'orders'" (click)="setTab('orders')">
-          <span class="material-symbols-outlined">receipt_long</span>
-        </button>
-        <button class="kb-tab-btn" [class.kb-tab-btn--active]="activeTab() === 'availability'" (click)="setTab('availability')">
-          <span class="material-symbols-outlined">toggle_on</span>
-        </button>
-      </div>
     </header>
 
-    <!-- ── Orders ── -->
-    @if (activeTab() === 'orders') {
-      <div class="kb-board">
+    <div class="kb-board">
 
         <!-- Pendientes -->
         <div class="kb-col">
@@ -94,34 +84,7 @@
           }
         </div>
 
-      </div>
-    }
-
-    <!-- ── Availability ── -->
-    @if (activeTab() === 'availability') {
-      <div class="kb-avail">
-        @for (cat of staffCategories(); track cat.id) {
-          <div class="kb-avail-cat">
-            <h3 class="kb-avail-cat__title">{{ cat.name }}</h3>
-            @for (dish of cat.dishes; track dish.id) {
-              <div class="kb-avail-dish" [class.kb-avail-dish--off]="!dish.isAvailable">
-                <div class="kb-avail-dish__info">
-                  <span class="kb-avail-dish__name">{{ dish.name }}</span>
-                  <span class="kb-avail-dish__status">{{ dish.isAvailable ? 'Disponible' : 'Agotado' }}</span>
-                </div>
-                <button
-                  class="kb-avail-toggle"
-                  [class.kb-avail-toggle--on]="dish.isAvailable"
-                  [disabled]="togglingDish() === dish.id"
-                  (click)="toggleDishAvailability(dish)">
-                  <span class="kb-avail-toggle__thumb"></span>
-                </button>
-              </div>
-            }
-          </div>
-        }
-      </div>
-    }
+    </div>
 
   }
 </div>
