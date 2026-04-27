@@ -57,6 +57,7 @@
                       class="wb-tcard"
                       [class.wb-tcard--occupied]="tableStatus(table) === 'occupied'"
                       [class.wb-tcard--served]="tableStatus(table) === 'served'"
+                      [class.wb-tcard--paid]="tableStatus(table) === 'paid'"
                       (click)="pickTable(table)">
                       <span class="material-symbols-outlined wb-tcard__icon">table_restaurant</span>
                       <span class="wb-tcard__name">{{ table.name }}</span>
@@ -65,8 +66,11 @@
                       } @else if (tableStatus(table) === 'occupied') {
                         <span class="wb-tcard__status">Ocupada</span>
                         <span class="wb-tcard__total">S/ {{ table.activeOrder!.total.toFixed(2) }}</span>
-                      } @else {
+                      } @else if (tableStatus(table) === 'served') {
                         <span class="wb-tcard__status">Por pagar</span>
+                        <span class="wb-tcard__total">S/ {{ table.activeOrder!.total.toFixed(2) }}</span>
+                      } @else {
+                        <span class="wb-tcard__status">Pagado</span>
                         <span class="wb-tcard__total">S/ {{ table.activeOrder!.total.toFixed(2) }}</span>
                       }
                     </button>
@@ -120,10 +124,12 @@
                     }
                   </div>
                   <div class="wb-card__actions">
-                    <button class="wb-btn wb-btn--add-items" (click)="startAddItems(order)">
-                      <span class="material-symbols-outlined">add_circle</span>
-                      Agregar productos
-                    </button>
+                    @if (!order.isPaid) {
+                      <button class="wb-btn wb-btn--add-items" (click)="startAddItems(order)">
+                        <span class="material-symbols-outlined">add_circle</span>
+                        Agregar productos
+                      </button>
+                    }
                     <button class="wb-btn wb-btn--pay" [class.wb-btn--paid]="order.isPaid" (click)="togglePayment(order)">
                       {{ order.isPaid ? '✓ Pagado' : 'Marcar pagado' }}
                     </button>

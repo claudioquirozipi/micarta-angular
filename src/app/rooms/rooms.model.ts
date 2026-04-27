@@ -4,6 +4,7 @@ export interface ActiveOrderRef {
   id:     string;
   status: OrderStatus;
   total:  number;
+  isPaid: boolean;
 }
 
 export interface RoomTable {

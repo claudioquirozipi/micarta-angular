@@ -130,7 +130,7 @@ export class WaiterBoard implements OnInit, OnDestroy {
       ...room,
       tables: room.tables.map(t =>
         t.id === order.tableId
-          ? { ...t, activeOrder: isActive ? { id: order.id, status: order.status, total: order.total } : null }
+          ? { ...t, activeOrder: isActive ? { id: order.id, status: order.status, total: order.total, isPaid: order.isPaid } : null }
           : t,
       ),
     })));
@@ -147,8 +147,9 @@ export class WaiterBoard implements OnInit, OnDestroy {
   toggle(id: string) { this.expanded.set(this.expanded() === id ? null : id); }
   selectCat(id: string) { this.activeCatId.set(id); }
 
-  tableStatus(table: RoomTable): 'free' | 'occupied' | 'served' {
+  tableStatus(table: RoomTable): 'free' | 'occupied' | 'served' | 'paid' {
     if (!table.activeOrder) return 'free';
+    if (table.activeOrder.status === 'SERVED' && table.activeOrder.isPaid) return 'paid';
     if (table.activeOrder.status === 'SERVED') return 'served';
     return 'occupied';
   }
