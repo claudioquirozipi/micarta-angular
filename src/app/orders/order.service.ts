@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Order, CreateOrderDto, MemberAccess, OrderStatus } from './order.model';
+import { Order, CreateOrderDto, AddOrderItemsDto, MemberAccess, OrderStatus } from './order.model';
 
 const API = `${environment.apiUrl}/restaurants`;
 
@@ -21,6 +21,10 @@ export class OrderService {
 
   create(restaurantId: string, dto: CreateOrderDto) {
     return this.http.post<Order>(`${API}/${restaurantId}/orders`, dto);
+  }
+
+  addItems(restaurantId: string, orderId: string, dto: AddOrderItemsDto) {
+    return this.http.post<Order>(`${API}/${restaurantId}/orders/${orderId}/items`, dto);
   }
 
   updateStatus(restaurantId: string, orderId: string, status: OrderStatus) {

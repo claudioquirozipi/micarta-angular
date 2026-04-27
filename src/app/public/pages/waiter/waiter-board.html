@@ -120,6 +120,10 @@
                     }
                   </div>
                   <div class="wb-card__actions">
+                    <button class="wb-btn wb-btn--add-items" (click)="startAddItems(order)">
+                      <span class="material-symbols-outlined">add_circle</span>
+                      Agregar productos
+                    </button>
                     <button class="wb-btn wb-btn--pay" [class.wb-btn--paid]="order.isPaid" (click)="togglePayment(order)">
                       {{ order.isPaid ? '✓ Pagado' : 'Marcar pagado' }}
                     </button>
@@ -146,7 +150,21 @@
     @if (activeTab() === 'new') {
       <div class="wb-new">
 
-        <!-- Table selector -->
+        <!-- Add-items mode banner -->
+        @if (addingToOrder(); as target) {
+          <div class="wb-add-banner">
+            <div class="wb-add-banner__info">
+              <span class="material-symbols-outlined">add_circle</span>
+              <span>Agregando a <strong>
+                @if (target.tableNumber) { Mesa {{ target.tableNumber }} } @else { Orden sin mesa }
+              </strong></span>
+            </div>
+            <button class="wb-add-banner__cancel" (click)="cancelAddItems()">Cancelar</button>
+          </div>
+        }
+
+        <!-- Table selector (hidden in add-items mode) -->
+        @if (!addingToOrder()) {
         <div class="wb-tsel">
           @if (selectedTableId()) {
             <div class="wb-tsel__chip">
@@ -173,6 +191,7 @@
             Entrega directa (sin pasar por cocina)
           </label>
         </div>
+        }
 
         <!-- Category tabs -->
         <div class="wb-cat-tabs">
@@ -233,7 +252,7 @@
           <div class="wb-cart-bar">
             <span>{{ cart().reduce((s, i) => s + i.quantity, 0) }} items · S/ {{ cartTotal().toFixed(2) }}</span>
             <button class="wb-btn wb-btn--primary" (click)="submitOrder()" [disabled]="saving()">
-              {{ saving() ? 'Enviando...' : 'Enviar orden' }}
+              {{ saving() ? 'Enviando...' : addingToOrder() ? 'Agregar a orden' : 'Enviar orden' }}
             </button>
           </div>
         }

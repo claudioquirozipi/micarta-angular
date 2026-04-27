@@ -60,6 +60,11 @@ export interface CreateOrderDto {
   items:           CreateOrderItemDto[];
 }
 
+export interface AddOrderItemsDto {
+  items:          CreateOrderItemDto[];
+  directDelivery?: boolean;
+}
+
 export interface MemberAccess {
   id:       string;
   name:     string;

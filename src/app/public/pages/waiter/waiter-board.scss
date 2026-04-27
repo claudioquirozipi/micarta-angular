@@ -313,6 +313,28 @@
   &__sub  { color: var(--color-muted); font-weight: 600; white-space: nowrap; padding-top: .125rem; }
 }
 
+// ── Add-items banner ──────────────────────────────────────
+.wb-add-banner {
+  display: flex; align-items: center; justify-content: space-between;
+  background: #eff6ff; border: 1px solid #bfdbfe; border-radius: .875rem;
+  padding: .75rem 1rem;
+
+  &__info {
+    display: flex; align-items: center; gap: .5rem;
+    font-size: .9375rem; color: var(--color-primary);
+    .material-symbols-outlined { font-size: 1.25rem; }
+    strong { font-weight: 700; }
+  }
+
+  &__cancel {
+    background: transparent; border: 1px solid #93c5fd;
+    color: var(--color-primary); border-radius: .5rem;
+    padding: .25rem .625rem; font-size: .75rem; font-weight: 600;
+    cursor: pointer; transition: background .15s;
+    &:hover { background: #dbeafe; }
+  }
+}
+
 // ── New order form ────────────────────────────────────────
 .wb-new { padding: .75rem; display: flex; flex-direction: column; gap: .75rem; }
 
@@ -461,6 +483,13 @@
   }
 
   &--danger { color: #dc2626; border-color: #fecaca; background: #fef2f2; &:hover { background: #fee2e2; } }
+
+  &--add-items {
+    display: flex; align-items: center; gap: .375rem;
+    background: #eff6ff; border-color: #bfdbfe; color: var(--color-primary);
+    .material-symbols-outlined { font-size: 1rem; }
+    &:hover { background: #dbeafe; }
+  }
 }
 
 // ── Toggle ────────────────────────────────────────────────

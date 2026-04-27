@@ -14,6 +14,7 @@ import {
   MemberAccess, Order, OrderStatus,
   STATUS_COLOR, STATUS_LABEL,
 } from '../../../orders/order.model';
+
 import { PublicCategory } from '../../../menu/menu.model';
 import { Room, RoomTable } from '../../../rooms/rooms.model';
 
@@ -52,6 +53,7 @@ export class WaiterBoard implements OnInit, OnDestroy {
 
   readonly selectedTableId   = signal<string | null>(null);
   readonly selectedTableName = signal<string>('');
+  readonly addingToOrder     = signal<Order | null>(null);
 
   readonly STATUS_LABEL = STATUS_LABEL;
   readonly STATUS_COLOR = STATUS_COLOR;
@@ -134,7 +136,14 @@ export class WaiterBoard implements OnInit, OnDestroy {
     })));
   }
 
-  setTab(tab: 'tables' | 'orders' | 'new') { this.activeTab.set(tab); }
+  setTab(tab: 'tables' | 'orders' | 'new') {
+    if (tab !== 'new' && this.addingToOrder()) {
+      this.addingToOrder.set(null);
+      this.cart.set([]);
+      this.noteOpen.set({});
+    }
+    this.activeTab.set(tab);
+  }
   toggle(id: string) { this.expanded.set(this.expanded() === id ? null : id); }
   selectCat(id: string) { this.activeCatId.set(id); }
 
@@ -200,15 +209,52 @@ export class WaiterBoard implements OnInit, OnDestroy {
     );
   }
 
+  startAddItems(order: Order) {
+    this.addingToOrder.set(order);
+    this.cart.set([]);
+    this.noteOpen.set({});
+    this.directDelivery.set(false);
+    this.activeTab.set('new');
+  }
+
+  cancelAddItems() {
+    this.addingToOrder.set(null);
+    this.cart.set([]);
+    this.noteOpen.set({});
+    this.activeTab.set('orders');
+  }
+
   submitOrder() {
-    const access = this.access();
+    const access       = this.access();
+    const targetOrder  = this.addingToOrder();
     if (!access || !this.cart().length) return;
     this.saving.set(true);
+
+    const items = this.cart().map(i => ({ dishId: i.dishId, quantity: i.quantity, notes: i.notes }));
+
+    if (targetOrder) {
+      this.orderSvc.addItems(access.id, targetOrder.id, { items, directDelivery: this.directDelivery() }).subscribe({
+        next: updated => {
+          this.orders.update(os => os.map(o => o.id === updated.id ? updated : o));
+          if (updated.tableId) this.syncTableOrder(updated);
+          this.addingToOrder.set(null);
+          this.cart.set([]);
+          this.noteOpen.set({});
+          this.directDelivery.set(false);
+          this.saving.set(false);
+          this.expanded.set(updated.id);
+          this.activeTab.set('orders');
+        },
+        error: () => this.saving.set(false),
+      });
+      return;
+    }
+
     this.orderSvc.create(access.id, {
       type:           'TABLE',
       tableId:        this.selectedTableId() ?? undefined,
       directDelivery: this.directDelivery(),
-      items: this.cart().map(i => ({ dishId: i.dishId, quantity: i.quantity, notes: i.notes })),
+      items,
     }).subscribe({
       next: order => {
         this.cart.set([]);
