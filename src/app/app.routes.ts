@@ -60,6 +60,11 @@ export const routes: Routes = [
           import('./dashboard/pages/qr/dashboard-qr').then(m => m.DashboardQr),
       },
       {
+        path: 'salones',
+        loadComponent: () =>
+          import('./dashboard/pages/rooms/dashboard-rooms').then(m => m.DashboardRooms),
+      },
+      {
         path: 'suscripcion',
         loadComponent: () =>
           import('./dashboard/pages/subscription/dashboard-subscription').then(m => m.DashboardSubscription),

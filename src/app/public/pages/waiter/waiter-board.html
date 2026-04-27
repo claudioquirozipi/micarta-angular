@@ -19,6 +19,10 @@
 
     <!-- Tabs -->
     <div class="wb-tabs">
+      <button class="wb-tabs__btn" [class.wb-tabs__btn--active]="activeTab() === 'tables'" (click)="setTab('tables')">
+        <span class="material-symbols-outlined">meeting_room</span>
+        Mesas
+      </button>
       <button class="wb-tabs__btn" [class.wb-tabs__btn--active]="activeTab() === 'orders'" (click)="setTab('orders')">
         <span class="material-symbols-outlined">receipt_long</span>
         Órdenes
@@ -26,9 +30,54 @@
       </button>
       <button class="wb-tabs__btn" [class.wb-tabs__btn--active]="activeTab() === 'new'" (click)="setTab('new')">
         <span class="material-symbols-outlined">add_circle</span>
-        Nueva orden
+        Nueva
       </button>
     </div>
+
+    <!-- ── Tables tab ── -->
+    @if (activeTab() === 'tables') {
+      @if (!rooms().length) {
+        <div class="wb-empty">
+          <span class="material-symbols-outlined wb-empty__icon">meeting_room</span>
+          <p>No hay salones configurados.</p>
+          <p class="wb-empty__hint">El administrador puede crearlos en el dashboard.</p>
+        </div>
+      } @else {
+        <div class="wb-rooms">
+          @for (room of rooms(); track room.id) {
+            <div class="wb-room">
+              <h2 class="wb-room__title">
+                <span class="material-symbols-outlined">meeting_room</span>
+                {{ room.name }}
+              </h2>
+              <div class="wb-room__grid">
+                @for (table of room.tables; track table.id) {
+                  @if (table.isActive) {
+                    <button
+                      class="wb-tcard"
+                      [class.wb-tcard--occupied]="tableStatus(table) === 'occupied'"
+                      [class.wb-tcard--served]="tableStatus(table) === 'served'"
+                      (click)="pickTable(table)">
+                      <span class="material-symbols-outlined wb-tcard__icon">table_restaurant</span>
+                      <span class="wb-tcard__name">{{ table.name }}</span>
+                      @if (tableStatus(table) === 'free') {
+                        <span class="wb-tcard__status">Libre</span>
+                      } @else if (tableStatus(table) === 'occupied') {
+                        <span class="wb-tcard__status">Ocupada</span>
+                        <span class="wb-tcard__total">S/ {{ table.activeOrder!.total.toFixed(2) }}</span>
+                      } @else {
+                        <span class="wb-tcard__status">Por pagar</span>
+                        <span class="wb-tcard__total">S/ {{ table.activeOrder!.total.toFixed(2) }}</span>
+                      }
+                    </button>
+                  }
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
 
     <!-- ── Orders tab ── -->
     @if (activeTab() === 'orders') {
@@ -97,11 +146,23 @@
     @if (activeTab() === 'new') {
       <div class="wb-new">
 
-        <div class="wb-form-row">
-          <div class="wb-field">
-            <label class="wb-field__label">Mesa</label>
-            <input class="wb-field__input" type="text" [ngModel]="tableNumber()" (ngModelChange)="tableNumber.set($event)" placeholder="Ej. 5" />
-          </div>
+        <!-- Table selector -->
+        <div class="wb-tsel">
+          @if (selectedTableId()) {
+            <div class="wb-tsel__chip">
+              <span class="material-symbols-outlined">table_restaurant</span>
+              <span class="wb-tsel__chip-name">{{ selectedTableName() }}</span>
+              <button class="wb-tsel__change" (click)="goPickTable()">Cambiar</button>
+            </div>
+          } @else {
+            <div class="wb-tsel__empty">
+              <button class="wb-tsel__pick-btn" (click)="goPickTable()">
+                <span class="material-symbols-outlined">table_restaurant</span>
+                Seleccionar mesa
+              </button>
+              <span class="wb-tsel__or">o continúa sin mesa</span>
+            </div>
+          }
         </div>
 
         <div class="wb-direct">

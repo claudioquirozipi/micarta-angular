@@ -18,6 +18,7 @@ export class DashboardLayout implements OnInit {
   readonly navItems: NavItem[] = [
     { path: '/dashboard/perfil',      label: 'Perfil',       icon: 'store'        },
     { path: '/dashboard/menu',        label: 'Menú',         icon: 'restaurant'   },
+    { path: '/dashboard/salones',     label: 'Salones',      icon: 'meeting_room' },
     { path: '/dashboard/ordenes',     label: 'Órdenes',      icon: 'receipt_long' },
     { path: '/dashboard/equipo',      label: 'Equipo',       icon: 'group'        },
     { path: '/dashboard/preview',     label: 'Vista previa', icon: 'visibility'   },

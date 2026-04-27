@@ -17,12 +17,20 @@ export interface OrderItem {
   notes:     string | null;
 }
 
+export interface TableRef {
+  id:   string;
+  name: string;
+  room: { id: string; name: string; };
+}
+
 export interface Order {
   id:              string;
   type:            OrderType;
   status:          OrderStatus;
   isPaid:          boolean;
   tableNumber:     string | null;
+  tableId:         string | null;
+  table:           TableRef | null;
   customerName:    string | null;
   customerPhone:   string | null;
   customerAddress: string | null;
@@ -42,6 +50,7 @@ export interface CreateOrderItemDto {
 
 export interface CreateOrderDto {
   type:            OrderType;
+  tableId?:        string;
   tableNumber?:    string;
   customerName?:   string;
   customerPhone?:  string;

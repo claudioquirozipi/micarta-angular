@@ -1,0 +1,134 @@
+<div class="dr-page">
+  <div class="dr-header">
+    <h1 class="dr-header__title">Salones y Mesas</h1>
+  </div>
+
+  <!-- New room form -->
+  <div class="dr-add-room">
+    <input
+      class="dr-input"
+      type="text"
+      placeholder="Nombre del salón (ej. Terraza, Salón principal)"
+      [ngModel]="newRoomName()"
+      (ngModelChange)="newRoomName.set($event)"
+      (keyup.enter)="addRoom()"
+    />
+    <button class="dr-btn dr-btn--primary" (click)="addRoom()" [disabled]="addingRoom() || !newRoomName().trim()">
+      <span class="material-symbols-outlined">add</span>
+      Nuevo salón
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="dr-loading">
+      <span class="material-symbols-outlined dr-spin">sync</span> Cargando...
+    </div>
+  } @else if (!rooms().length) {
+    <div class="dr-empty">
+      <span class="material-symbols-outlined dr-empty__icon">meeting_room</span>
+      <p>No hay salones creados aún.</p>
+      <p class="dr-empty__sub">Crea un salón para empezar a agregar mesas.</p>
+    </div>
+  } @else {
+    <div class="dr-rooms">
+      @for (room of rooms(); track room.id) {
+        <div class="dr-room">
+
+          <!-- Room header -->
+          <div class="dr-room__header">
+            @if (editingRoomId() === room.id) {
+              <input
+                class="dr-input dr-input--inline"
+                [ngModel]="editingRoomName()"
+                (ngModelChange)="editingRoomName.set($event)"
+                (keyup.enter)="saveRoom(room)"
+                (keyup.escape)="editingRoomId.set(null)"
+              />
+              <button class="dr-icon-btn dr-icon-btn--save" (click)="saveRoom(room)">
+                <span class="material-symbols-outlined">check</span>
+              </button>
+              <button class="dr-icon-btn" (click)="editingRoomId.set(null)">
+                <span class="material-symbols-outlined">close</span>
+              </button>
+            } @else {
+              <h2 class="dr-room__name">
+                <span class="material-symbols-outlined">meeting_room</span>
+                {{ room.name }}
+                <span class="dr-room__count">{{ room.tables.length }} mesa{{ room.tables.length !== 1 ? 's' : '' }}</span>
+              </h2>
+              <div class="dr-room__actions">
+                <button class="dr-icon-btn" title="Editar" (click)="startEditRoom(room)">
+                  <span class="material-symbols-outlined">edit</span>
+                </button>
+                <button class="dr-icon-btn dr-icon-btn--danger" title="Eliminar" (click)="deleteRoom(room.id)">
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
+              </div>
+            }
+          </div>
+
+          <!-- Tables list -->
+          <div class="dr-tables">
+            @for (table of room.tables; track table.id) {
+              <div class="dr-table" [class.dr-table--inactive]="!table.isActive">
+                @if (editingTableId() === table.id) {
+                  <input
+                    class="dr-input dr-input--inline dr-input--sm"
+                    [ngModel]="editingTableName()"
+                    (ngModelChange)="editingTableName.set($event)"
+                    (keyup.enter)="saveTable(room.id, table.id)"
+                    (keyup.escape)="editingTableId.set(null)"
+                  />
+                  <button class="dr-icon-btn dr-icon-btn--save" (click)="saveTable(room.id, table.id)">
+                    <span class="material-symbols-outlined">check</span>
+                  </button>
+                  <button class="dr-icon-btn" (click)="editingTableId.set(null)">
+                    <span class="material-symbols-outlined">close</span>
+                  </button>
+                } @else {
+                  <span class="material-symbols-outlined dr-table__icon">table_restaurant</span>
+                  <span class="dr-table__name">{{ table.name }}</span>
+                  <div class="dr-table__actions">
+                    <button
+                      class="dr-toggle"
+                      [class.dr-toggle--on]="table.isActive"
+                      [title]="table.isActive ? 'Desactivar' : 'Activar'"
+                      (click)="toggleTable(room.id, table.id, !table.isActive)">
+                      <span class="dr-toggle__thumb"></span>
+                    </button>
+                    <button class="dr-icon-btn" title="Editar" (click)="startEditTable(table.id, table.name)">
+                      <span class="material-symbols-outlined">edit</span>
+                    </button>
+                    <button class="dr-icon-btn dr-icon-btn--danger" title="Eliminar" (click)="deleteTable(room.id, table.id)">
+                      <span class="material-symbols-outlined">delete</span>
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+
+            <!-- Add table form -->
+            <div class="dr-add-table">
+              <input
+                class="dr-input dr-input--sm"
+                type="text"
+                placeholder="Nombre de la mesa (ej. Mesa 1, T-1)"
+                [ngModel]="getNewTableName(room.id)"
+                (ngModelChange)="setNewTableName(room.id, $event)"
+                (keyup.enter)="addTable(room.id)"
+              />
+              <button
+                class="dr-btn dr-btn--ghost"
+                (click)="addTable(room.id)"
+                [disabled]="addingTableRoom() === room.id || !getNewTableName(room.id).trim()">
+                <span class="material-symbols-outlined">add</span>
+                Agregar mesa
+              </button>
+            </div>
+          </div>
+
+        </div>
+      }
+    </div>
+  }
+</div>
