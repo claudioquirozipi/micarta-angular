@@ -146,13 +146,15 @@
 .wb-items { display: flex; flex-direction: column; gap: .25rem; }
 
 .wb-item {
-  display: flex; align-items: center; gap: .5rem;
+  display: flex; align-items: flex-start; gap: .5rem;
   font-size: .875rem; padding: .25rem 0;
   border-bottom: 1px solid #f9fafb;
 
-  &__qty  { font-weight: 700; color: var(--color-primary); min-width: 2rem; }
-  &__name { flex: 1; color: var(--color-text); }
-  &__sub  { color: var(--color-muted); font-weight: 600; }
+  &__qty  { font-weight: 700; color: var(--color-primary); min-width: 2rem; padding-top: .125rem; }
+  &__info { flex: 1; display: flex; flex-direction: column; gap: .125rem; }
+  &__name { color: var(--color-text); }
+  &__note { font-size: .75rem; color: var(--color-muted); font-style: italic; }
+  &__sub  { color: var(--color-muted); font-weight: 600; white-space: nowrap; padding-top: .125rem; }
 }
 
 // ── New order form ────────────────────────────────────────
@@ -201,15 +203,61 @@
 .wb-dishes { display: flex; flex-direction: column; gap: .375rem; }
 
 .wb-dish {
-  display: flex; align-items: center; gap: .75rem;
   background: #fff; border: 1px solid #e9eaec;
   border-radius: .75rem; padding: .75rem;
+  display: flex; flex-direction: column; gap: 0;
+  transition: border-color .15s;
+
+  &--in-cart { border-color: var(--color-primary); }
+
+  &__main {
+    display: flex; align-items: center; gap: .75rem;
+  }
 
   &__info { flex: 1; }
   &__name  { font-size: .9375rem; font-weight: 600; color: var(--color-text); }
   &__price { font-size: .8125rem; color: var(--color-primary); font-weight: 600; margin-top: .125rem; }
 
-  &__qty { display: flex; align-items: center; gap: .375rem; }
+  &__controls { display: flex; align-items: center; gap: .375rem; }
+
+  &__note-row {
+    display: flex; align-items: center; gap: .5rem;
+    margin-top: .625rem; padding-top: .625rem;
+    border-top: 1px dashed #e9eaec;
+    animation: note-slide-in .15s ease;
+  }
+
+  &__note-icon { font-size: 1rem; color: var(--color-muted); flex-shrink: 0; }
+
+  &__note-input {
+    flex: 1; border: none; outline: none;
+    font-size: .875rem; color: var(--color-text);
+    background: transparent;
+    &::placeholder { color: #d1d5db; }
+  }
+}
+
+.wb-note-btn {
+  width: 1.875rem; height: 1.875rem; border-radius: 50%;
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  background: #f3f4f6; color: var(--color-muted);
+  transition: background .15s, color .15s;
+  flex-shrink: 0;
+
+  .material-symbols-outlined { font-size: 1rem; }
+
+  &:hover { background: #e5e7eb; color: var(--color-text); }
+
+  &--active {
+    background: #eff6ff; color: var(--color-primary);
+    &:hover { background: #dbeafe; }
+  }
+}
+
+@keyframes note-slide-in {
+  from { opacity: 0; transform: translateY(-.25rem); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .wb-qty-btn {

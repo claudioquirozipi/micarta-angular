@@ -57,6 +57,7 @@ export interface PublicDish {
 export interface CartEntry {
   dish:     PublicDish;
   quantity: number;
+  notes?:   string;
 }
 
 export interface CreateCategoryDto { name: string; }

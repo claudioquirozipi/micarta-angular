@@ -65,7 +65,10 @@
                 @for (item of order.items; track item.id) {
                   <div class="do-item">
                     <span class="do-item__qty">{{ item.quantity }}×</span>
-                    <span class="do-item__name">{{ item.dishName }}</span>
+                    <div class="do-item__info">
+                      <span class="do-item__name">{{ item.dishName }}</span>
+                      @if (item.notes) { <span class="do-item__note">📝 {{ item.notes }}</span> }
+                    </div>
                     <span class="do-item__sub">S/ {{ item.subtotal.toFixed(2) }}</span>
                   </div>
                 }

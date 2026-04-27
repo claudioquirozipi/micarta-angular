@@ -14,6 +14,7 @@ export interface OrderItem {
   dishPrice: number;
   quantity:  number;
   subtotal:  number;
+  notes:     string | null;
 }
 
 export interface Order {
@@ -36,6 +37,7 @@ export interface Order {
 export interface CreateOrderItemDto {
   dishId:   string;
   quantity: number;
+  notes?:   string;
 }
 
 export interface CreateOrderDto {

@@ -44,7 +44,10 @@
           @for (item of items(); track item.dish.id) {
             <div class="co-item">
               <span class="co-item__qty">{{ item.quantity }}×</span>
-              <span class="co-item__name">{{ item.dish.name }}</span>
+              <div class="co-item__info">
+                <span class="co-item__name">{{ item.dish.name }}</span>
+                @if (item.notes) { <span class="co-item__note">📝 {{ item.notes }}</span> }
+              </div>
               <span class="co-item__sub">S/ {{ item.subtotal.toFixed(2) }}</span>
             </div>
           }

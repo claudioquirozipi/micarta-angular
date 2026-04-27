@@ -204,12 +204,17 @@
   &__items { display: flex; flex-direction: column; gap: .25rem; }
 
   &__item {
-    display: flex; align-items: center; gap: .5rem;
+    display: flex; align-items: flex-start; gap: .5rem;
     font-size: .9375rem;
   }
 
-  &__qty  { font-weight: 700; color: #fb923c; min-width: 2rem; }
+  &__item-info {
+    display: flex; flex-direction: column; gap: .125rem; flex: 1;
+  }
+
+  &__qty  { font-weight: 700; color: #fb923c; min-width: 2rem; padding-top: .1rem; }
   &__name { color: #f9fafb; font-weight: 500; }
+  &__note { font-size: .8rem; color: #6b7280; font-style: italic; }
 
   &__notes { font-size: .8125rem; color: #9ca3af; }
 }

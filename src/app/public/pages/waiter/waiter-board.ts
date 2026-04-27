@@ -15,7 +15,7 @@ import {
 } from '../../../orders/order.model';
 import { PublicCategory } from '../../../menu/menu.model';
 
-interface CartItem { dishId: string; dishName: string; dishPrice: number; quantity: number; }
+interface CartItem { dishId: string; dishName: string; dishPrice: number; quantity: number; notes?: string; }
 
 @Component({
   selector: 'app-waiter-board',
@@ -39,13 +39,13 @@ export class WaiterBoard implements OnInit, OnDestroy {
   readonly activeTab  = signal<'orders' | 'new'>('orders');
   readonly expanded   = signal<string | null>(null);
 
-  readonly categories   = signal<PublicCategory[]>([]);
-  readonly activeCatId  = signal<string | null>(null);
-  readonly cart         = signal<CartItem[]>([]);
-  readonly tableNumber  = signal('');
-  readonly notes        = signal('');
+  readonly categories     = signal<PublicCategory[]>([]);
+  readonly activeCatId    = signal<string | null>(null);
+  readonly cart           = signal<CartItem[]>([]);
+  readonly tableNumber    = signal('');
   readonly directDelivery = signal(false);
-  readonly saving       = signal(false);
+  readonly saving         = signal(false);
+  readonly noteOpen       = signal<Record<string, boolean>>({});
 
   readonly STATUS_LABEL = STATUS_LABEL;
   readonly STATUS_COLOR = STATUS_COLOR;
@@ -128,11 +128,25 @@ export class WaiterBoard implements OnInit, OnDestroy {
       const item = cart.find(i => i.dishId === dishId);
       if (!item) return cart;
       if (item.quantity > 1) return cart.map(i => i.dishId === dishId ? { ...i, quantity: i.quantity - 1 } : i);
+      this.noteOpen.update(s => { const n = { ...s }; delete n[dishId]; return n; });
       return cart.filter(i => i.dishId !== dishId);
     });
   }
 
-  getQty(dishId: string) { return this.cart().find(i => i.dishId === dishId)?.quantity ?? 0; }
+  toggleNote(dishId: string) {
+    this.noteOpen.update(s => ({ ...s, [dishId]: !s[dishId] }));
+  }
+
+  isNoteOpen(dishId: string) { return this.noteOpen()[dishId] ?? false; }
+
+  getQty(dishId: string)  { return this.cart().find(i => i.dishId === dishId)?.quantity ?? 0; }
+  getNote(dishId: string) { return this.cart().find(i => i.dishId === dishId)?.notes ?? ''; }
+
+  setNote(dishId: string, note: string) {
+    this.cart.update(cart =>
+      cart.map(i => i.dishId === dishId ? { ...i, notes: note.trim() || undefined } : i),
+    );
+  }
 
   submitOrder() {
     const access = this.access();
@@ -141,14 +155,13 @@ export class WaiterBoard implements OnInit, OnDestroy {
     this.orderSvc.create(access.id, {
       type: 'TABLE',
       tableNumber:    this.tableNumber().trim() || undefined,
-      notes:          this.notes().trim() || undefined,
       directDelivery: this.directDelivery(),
-      items: this.cart().map(i => ({ dishId: i.dishId, quantity: i.quantity })),
+      items: this.cart().map(i => ({ dishId: i.dishId, quantity: i.quantity, notes: i.notes })),
     }).subscribe({
       next: () => {
         this.cart.set([]);
         this.tableNumber.set('');
-        this.notes.set('');
+        this.noteOpen.set({});
         this.directDelivery.set(false);
         this.saving.set(false);
         this.activeTab.set('orders');

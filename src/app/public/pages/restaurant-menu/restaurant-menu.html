@@ -106,17 +106,26 @@
           <div class="pm-sheet__items">
             @for (entry of cart(); track entry.dish.id) {
               <div class="pm-sheet__item">
-                <span class="pm-sheet__item-name">{{ entry.dish.name }}</span>
-                <div class="pm-sheet__item-qty">
-                  <button class="pm-dish__btn pm-dish__btn--sm" (click)="remove(entry.dish.id)">
-                    <span class="material-symbols-outlined">remove</span>
-                  </button>
-                  <span>{{ entry.quantity }}</span>
-                  <button class="pm-dish__btn pm-dish__btn--sm" (click)="add(entry.dish)">
-                    <span class="material-symbols-outlined">add</span>
-                  </button>
+                <div class="pm-sheet__item-top">
+                  <span class="pm-sheet__item-name">{{ entry.dish.name }}</span>
+                  <div class="pm-sheet__item-qty">
+                    <button class="pm-dish__btn pm-dish__btn--sm" (click)="remove(entry.dish.id)">
+                      <span class="material-symbols-outlined">remove</span>
+                    </button>
+                    <span>{{ entry.quantity }}</span>
+                    <button class="pm-dish__btn pm-dish__btn--sm" (click)="add(entry.dish)">
+                      <span class="material-symbols-outlined">add</span>
+                    </button>
+                  </div>
+                  <span class="pm-sheet__item-sub">S/ {{ (entry.dish.price * entry.quantity).toFixed(2) }}</span>
                 </div>
-                <span class="pm-sheet__item-sub">S/ {{ (entry.dish.price * entry.quantity).toFixed(2) }}</span>
+                <input
+                  class="pm-sheet__item-note"
+                  type="text"
+                  placeholder="Nota (ej. sin cebolla)"
+                  [ngModel]="getNote(entry.dish.id)"
+                  (ngModelChange)="setNote(entry.dish.id, $event)"
+                />
               </div>
             }
           </div>

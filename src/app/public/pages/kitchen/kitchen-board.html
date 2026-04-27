@@ -37,11 +37,13 @@
                 @for (item of order.items; track item.id) {
                   <div class="kb-card__item">
                     <span class="kb-card__qty">{{ item.quantity }}×</span>
-                    <span class="kb-card__name">{{ item.dishName }}</span>
+                    <div class="kb-card__item-info">
+                      <span class="kb-card__name">{{ item.dishName }}</span>
+                      @if (item.notes) { <span class="kb-card__note">📝 {{ item.notes }}</span> }
+                    </div>
                   </div>
                 }
               </div>
-              @if (order.notes) { <p class="kb-card__notes">📝 {{ order.notes }}</p> }
               <button class="kb-btn kb-btn--start" (click)="startCooking(order)">
                 <span class="material-symbols-outlined">local_fire_department</span>
                 Empezar a preparar
@@ -71,11 +73,13 @@
                 @for (item of order.items; track item.id) {
                   <div class="kb-card__item">
                     <span class="kb-card__qty">{{ item.quantity }}×</span>
-                    <span class="kb-card__name">{{ item.dishName }}</span>
+                    <div class="kb-card__item-info">
+                      <span class="kb-card__name">{{ item.dishName }}</span>
+                      @if (item.notes) { <span class="kb-card__note">📝 {{ item.notes }}</span> }
+                    </div>
                   </div>
                 }
               </div>
-              @if (order.notes) { <p class="kb-card__notes">📝 {{ order.notes }}</p> }
               <button class="kb-btn kb-btn--ready" (click)="markReady(order)">
                 <span class="material-symbols-outlined">check_circle</span>
                 Marcar listo

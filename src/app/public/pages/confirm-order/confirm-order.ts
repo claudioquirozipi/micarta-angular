@@ -8,7 +8,7 @@ import { PublicMenuService } from '../../../menu/public-menu.service';
 import { OrderService } from '../../../orders/order.service';
 import { PublicDish } from '../../../menu/menu.model';
 
-interface ResolvedItem { dish: PublicDish; quantity: number; subtotal: number; }
+interface ResolvedItem { dish: PublicDish; quantity: number; subtotal: number; notes?: string; }
 
 @Component({
   selector: 'app-confirm-order',
@@ -68,7 +68,10 @@ export class ConfirmOrder implements OnInit {
             const qty  = parseInt(qtyStr, 10);
             const dish = dishMap.get(dishId);
             if (!dish || isNaN(qty) || qty < 1) return null;
-            return { dish, quantity: qty, subtotal: Math.round(dish.price * qty * 100) / 100 };
+            const item: ResolvedItem = { dish, quantity: qty, subtotal: Math.round(dish.price * qty * 100) / 100 };
+            const notes = qp.get(`note_${dishId}`);
+            if (notes) item.notes = notes;
+            return item;
           })
           .filter((i): i is ResolvedItem => i !== null);
 
@@ -99,7 +102,7 @@ export class ConfirmOrder implements OnInit {
       customerName:    this.customerName() || undefined,
       customerPhone:   this.customerPhone() || undefined,
       customerAddress: this.customerAddress() || undefined,
-      items: this.items().map(i => ({ dishId: i.dish.id, quantity: i.quantity })),
+      items: this.items().map(i => ({ dishId: i.dish.id, quantity: i.quantity, notes: i.notes })),
     }).subscribe({
       next:  () => { this.saving.set(false); this.success.set(true); },
       error: () => { this.saving.set(false); this.error.set('Error al confirmar el pedido.'); },

@@ -78,6 +78,16 @@ export class RestaurantMenu implements OnInit {
     });
   }
 
+  getNote(dishId: string): string {
+    return this.cart().find(e => e.dish.id === dishId)?.notes ?? '';
+  }
+
+  setNote(dishId: string, note: string) {
+    this.cart.update(cart =>
+      cart.map(e => e.dish.id === dishId ? { ...e, notes: note.trim() || undefined } : e),
+    );
+  }
+
   sendWhatsApp() {
     const name = this.customerName().trim();
     if (!name) { this.nameError.set(true); return; }
@@ -91,12 +101,14 @@ export class RestaurantMenu implements OnInit {
     if (name) params.set('name', name);
     if (this.customerPhone().trim()) params.set('phone', this.customerPhone().trim());
     if (this.customerAddress().trim()) params.set('address', this.customerAddress().trim());
+    this.cart().filter(e => e.notes).forEach(e => params.set(`note_${e.dish.id}`, e.notes!));
 
     const confirmUrl = `${window.location.origin}/r/${r.slug}/confirmar?${params.toString()}`;
 
-    const lines = this.cart().map(
-      e => `• ${e.quantity}x ${e.dish.name} — S/ ${(e.dish.price * e.quantity).toFixed(2)}`,
-    );
+    const lines = this.cart().map(e => {
+      const notePart = e.notes ? ` (${e.notes})` : '';
+      return `• ${e.quantity}x ${e.dish.name}${notePart} — S/ ${(e.dish.price * e.quantity).toFixed(2)}`;
+    });
 
     const msgParts: string[] = [
       `Hola! Quiero hacer un pedido en ${r.name}:`,

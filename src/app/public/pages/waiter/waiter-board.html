@@ -62,7 +62,10 @@
                     @for (item of order.items; track item.id) {
                       <div class="wb-item">
                         <span class="wb-item__qty">{{ item.quantity }}×</span>
-                        <span class="wb-item__name">{{ item.dishName }}</span>
+                        <div class="wb-item__info">
+                          <span class="wb-item__name">{{ item.dishName }}</span>
+                          @if (item.notes) { <span class="wb-item__note">📝 {{ item.notes }}</span> }
+                        </div>
                         <span class="wb-item__sub">S/ {{ item.subtotal.toFixed(2) }}</span>
                       </div>
                     }
@@ -99,10 +102,6 @@
             <label class="wb-field__label">Mesa</label>
             <input class="wb-field__input" type="text" [ngModel]="tableNumber()" (ngModelChange)="tableNumber.set($event)" placeholder="Ej. 5" />
           </div>
-          <div class="wb-field">
-            <label class="wb-field__label">Notas</label>
-            <input class="wb-field__input" type="text" [ngModel]="notes()" (ngModelChange)="notes.set($event)" placeholder="Sin cebolla, etc." />
-          </div>
         </div>
 
         <div class="wb-direct">
@@ -126,22 +125,44 @@
         <!-- Dishes -->
         <div class="wb-dishes">
           @for (dish of activeDishes(); track dish.id) {
-            <div class="wb-dish">
-              <div class="wb-dish__info">
-                <p class="wb-dish__name">{{ dish.name }}</p>
-                <p class="wb-dish__price">S/ {{ dish.price.toFixed(2) }}</p>
-              </div>
-              <div class="wb-dish__qty">
-                @if (getQty(dish.id) > 0) {
-                  <button class="wb-qty-btn" (click)="removeFromCart(dish.id)">
-                    <span class="material-symbols-outlined">remove</span>
+            <div class="wb-dish" [class.wb-dish--in-cart]="getQty(dish.id) > 0">
+              <div class="wb-dish__main">
+                <div class="wb-dish__info">
+                  <p class="wb-dish__name">{{ dish.name }}</p>
+                  <p class="wb-dish__price">S/ {{ dish.price.toFixed(2) }}</p>
+                </div>
+                <div class="wb-dish__controls">
+                  @if (getQty(dish.id) > 0) {
+                    <button
+                      class="wb-note-btn"
+                      [class.wb-note-btn--active]="getNote(dish.id)"
+                      [title]="getNote(dish.id) || 'Agregar nota'"
+                      (click)="toggleNote(dish.id)">
+                      <span class="material-symbols-outlined">{{ getNote(dish.id) ? 'edit_note' : 'note_add' }}</span>
+                    </button>
+                    <button class="wb-qty-btn" (click)="removeFromCart(dish.id)">
+                      <span class="material-symbols-outlined">remove</span>
+                    </button>
+                    <span class="wb-qty-count">{{ getQty(dish.id) }}</span>
+                  }
+                  <button class="wb-qty-btn wb-qty-btn--add" (click)="addToCart(dish)">
+                    <span class="material-symbols-outlined">add</span>
                   </button>
-                  <span class="wb-qty-count">{{ getQty(dish.id) }}</span>
-                }
-                <button class="wb-qty-btn wb-qty-btn--add" (click)="addToCart(dish)">
-                  <span class="material-symbols-outlined">add</span>
-                </button>
+                </div>
               </div>
+              @if (getQty(dish.id) > 0 && isNoteOpen(dish.id)) {
+                <div class="wb-dish__note-row">
+                  <span class="material-symbols-outlined wb-dish__note-icon">edit_note</span>
+                  <input
+                    class="wb-dish__note-input"
+                    type="text"
+                    placeholder="Ej. sin cebolla, término medio..."
+                    [ngModel]="getNote(dish.id)"
+                    (ngModelChange)="setNote(dish.id, $event)"
+                    autofocus
+                  />
+                </div>
+              }
             </div>
           }
         </div>
