@@ -34,10 +34,30 @@ export class RestaurantMenu implements OnInit {
   readonly customerAddress = signal('');
   readonly nameError       = signal(false);
 
-  readonly cartCount = computed(() => this.cart().reduce((s, e) => s + e.quantity, 0));
-  readonly cartTotal = computed(() => this.cart().reduce((s, e) => s + e.dish.price * e.quantity, 0));
+  readonly cartCount  = computed(() => this.cart().reduce((s, e) => s + e.quantity, 0));
+  readonly cartTotal  = computed(() => this.cart().reduce((s, e) => s + e.dish.price * e.quantity, 0));
   readonly categories = computed(() => this.menu()?.categories ?? []);
   readonly restaurant = computed(() => this.menu()?.restaurant ?? null);
+
+  readonly hasFooterContent = computed(() => {
+    const r = this.restaurant();
+    return !!(r && (r.socialLinks.length || r.phone || r.whatsapp));
+  });
+
+  readonly waContactLink = computed(() => {
+    const phone = this.restaurant()?.whatsapp?.replace(/\D/g, '');
+    return phone ? `https://wa.me/${phone}` : null;
+  });
+
+  socialUrl(platform: string, handle: string): string {
+    const map: Record<string, string> = {
+      INSTAGRAM: `https://instagram.com/${handle}`,
+      FACEBOOK:  `https://facebook.com/${handle}`,
+      TIKTOK:    `https://tiktok.com/@${handle}`,
+      YOUTUBE:   `https://youtube.com/@${handle}`,
+    };
+    return map[platform] ?? '#';
+  }
 
   ngOnInit() {
     const slug = this.route.snapshot.paramMap.get('slug')!;

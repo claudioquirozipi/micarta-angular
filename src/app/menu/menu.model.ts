@@ -27,6 +27,13 @@ export interface PublicMenu {
   categories: PublicCategory[];
 }
 
+export type SocialPlatform = 'FACEBOOK' | 'INSTAGRAM' | 'TIKTOK' | 'YOUTUBE';
+
+export interface PublicSocialLink {
+  platform: SocialPlatform;
+  handle:   string;
+}
+
 export interface PublicRestaurant {
   id:          string;
   name:        string;
@@ -38,6 +45,7 @@ export interface PublicRestaurant {
   phone:       string | null;
   schedule:    string | null;
   isPremium:   boolean;
+  socialLinks: PublicSocialLink[];
 }
 
 export interface PublicCategory {
