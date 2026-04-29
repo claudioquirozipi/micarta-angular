@@ -2,6 +2,12 @@
 <aside class="sidebar sidebar--desktop">
   <div class="sidebar__brand">
     <a routerLink="/dashboard" class="brand">Mi<span>Carta</span></a>
+    <a routerLink="/dashboard/notificaciones" class="bell-btn" [class.bell-btn--active]="notificationsSvc.hasNotifications()" aria-label="Notificaciones">
+      <span class="material-symbols-outlined">notifications</span>
+      @if (notificationsSvc.hasNotifications()) {
+        <span class="bell-dot">{{ notificationsSvc.count() }}</span>
+      }
+    </a>
   </div>
 
   <nav class="sidebar__nav">
@@ -40,6 +46,12 @@
     </svg>
   </button>
   <a routerLink="/dashboard" class="brand">Mi<span>Carta</span></a>
+  <a routerLink="/dashboard/notificaciones" class="bell-btn bell-btn--mobile" [class.bell-btn--active]="notificationsSvc.hasNotifications()" aria-label="Notificaciones">
+    <span class="material-symbols-outlined">notifications</span>
+    @if (notificationsSvc.hasNotifications()) {
+      <span class="bell-dot">{{ notificationsSvc.count() }}</span>
+    }
+  </a>
 </div>
 
 <!-- ── Mobile overlay ── -->

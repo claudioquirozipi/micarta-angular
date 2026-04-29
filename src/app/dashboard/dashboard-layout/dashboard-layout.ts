@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit, computed, signal } from '@a
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../auth/services/auth.service';
 import { RestaurantService } from '../../restaurant/services/restaurant.service';
+import { NotificationsService } from '../../notifications/notifications.service';
 
 interface NavItem { path: string; label: string; icon: string; }
 
@@ -47,6 +48,7 @@ export class DashboardLayout implements OnInit {
     private auth: AuthService,
     private restaurantService: RestaurantService,
     private router: Router,
+    readonly notificationsSvc: NotificationsService,
   ) {}
 
   ngOnInit() {

@@ -1,0 +1,34 @@
+<div class="dn-page">
+  <div class="dn-header">
+    <h1 class="dn-header__title">Notificaciones</h1>
+    @if (notificationsSvc.count()) {
+      <span class="dn-header__badge">{{ notificationsSvc.count() }}</span>
+    }
+  </div>
+
+  @if (!notificationsSvc.hasNotifications()) {
+    <div class="dn-empty">
+      <span class="material-symbols-outlined dn-empty__icon">check_circle</span>
+      <p class="dn-empty__title">Todo al día</p>
+      <p class="dn-empty__sub">No tienes notificaciones pendientes.</p>
+    </div>
+  } @else {
+    <div class="dn-list">
+      @for (n of notificationsSvc.notifications(); track n.id) {
+        <div class="dn-card">
+          <div class="dn-card__icon-wrap">
+            <span class="material-symbols-outlined dn-card__icon">info</span>
+          </div>
+          <div class="dn-card__body">
+            <p class="dn-card__title">{{ n.title }}</p>
+            <p class="dn-card__message">{{ n.message }}</p>
+            <button class="dn-card__action" (click)="navigate(n.actionPath)">
+              {{ n.actionLabel }}
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
