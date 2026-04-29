@@ -76,11 +76,38 @@
 
               <!-- Actions -->
               <div class="do-card__actions">
-                <!-- Payment toggle -->
-                <button class="do-action-btn" [class.do-action-btn--active]="order.isPaid" (click)="togglePayment(order); $event.stopPropagation()">
-                  <span class="material-symbols-outlined">{{ order.isPaid ? 'payments' : 'attach_money' }}</span>
-                  {{ order.isPaid ? 'Pagado' : 'Marcar pagado' }}
-                </button>
+                <!-- Payment -->
+                @if (order.isPaid) {
+                  <button class="do-action-btn do-action-btn--active" (click)="unpayOrder(order); $event.stopPropagation()">
+                    <span class="material-symbols-outlined">payments</span>
+                    Pagado{{ order.paymentMethod ? ' · ' + PAYMENT_METHOD_LABEL[order.paymentMethod] : '' }}{{ order.tip ? ' + S/ ' + order.tip.toFixed(2) : '' }}
+                  </button>
+                } @else if (payingOrderId() === order.id) {
+                  <!-- Payment panel -->
+                  <div class="do-pay-panel" (click)="$event.stopPropagation()">
+                    <p class="do-pay-panel__label">Método de pago</p>
+                    <div class="do-pay-methods">
+                      @for (m of paymentMethods; track m) {
+                        <button class="do-pay-method" [class.do-pay-method--selected]="pendingMethod() === m" (click)="selectMethod(m)">
+                          {{ PAYMENT_METHOD_LABEL[m] }}
+                        </button>
+                      }
+                    </div>
+                    <div class="do-pay-tip">
+                      <label class="do-pay-tip__label">Propina (S/)</label>
+                      <input class="do-pay-tip__input" type="number" min="0" step="0.50" placeholder="0.00" (change)="setTip($event)" />
+                    </div>
+                    <div class="do-pay-confirm">
+                      <button class="do-action-btn do-action-btn--active" [disabled]="!pendingMethod()" (click)="confirmPayment(order)">Confirmar</button>
+                      <button class="do-action-btn" (click)="cancelPayment()">Cancelar</button>
+                    </div>
+                  </div>
+                } @else {
+                  <button class="do-action-btn" (click)="openPaymentPanel(order.id); $event.stopPropagation()">
+                    <span class="material-symbols-outlined">attach_money</span>
+                    Marcar pagado
+                  </button>
+                }
 
                 <!-- Status transitions -->
                 @for (status of nextStatuses(order); track status) {

@@ -24,6 +24,7 @@ export class DashboardLayout implements OnInit {
     { path: '/dashboard/preview',     label: 'Vista previa', icon: 'visibility'   },
     { path: '/dashboard/qr',          label: 'Mi QR',        icon: 'qr_code_2'   },
     { path: '/dashboard/suscripcion', label: 'Suscripción',  icon: 'credit_card'  },
+    { path: '/dashboard/reportes',   label: 'Reportes',     icon: 'assessment'   },
   ];
 
   readonly staffItems = computed(() => {

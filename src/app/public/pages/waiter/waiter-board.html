@@ -130,9 +130,37 @@
                         Agregar productos
                       </button>
                     }
-                    <button class="wb-btn wb-btn--pay" [class.wb-btn--paid]="order.isPaid" (click)="togglePayment(order)">
-                      {{ order.isPaid ? '✓ Pagado' : 'Marcar pagado' }}
-                    </button>
+
+                    <!-- Payment -->
+                    @if (order.isPaid) {
+                      <button class="wb-btn wb-btn--paid" (click)="unpayOrder(order)">
+                        ✓ Pagado{{ order.paymentMethod ? ' · ' + PAYMENT_METHOD_LABEL[order.paymentMethod] : '' }}{{ order.tip ? ' + S/ ' + order.tip.toFixed(2) : '' }}
+                      </button>
+                    } @else if (payingOrderId() === order.id) {
+                      <div class="wb-pay-panel">
+                        <p class="wb-pay-panel__label">Método de pago</p>
+                        <div class="wb-pay-methods">
+                          @for (m of paymentMethods; track m) {
+                            <button class="wb-pay-method" [class.wb-pay-method--selected]="pendingMethod() === m" (click)="selectMethod(m)">
+                              {{ PAYMENT_METHOD_LABEL[m] }}
+                            </button>
+                          }
+                        </div>
+                        <div class="wb-pay-tip">
+                          <label class="wb-pay-tip__label">Propina (S/)</label>
+                          <input class="wb-pay-tip__input" type="number" min="0" step="0.50" placeholder="0.00" (change)="setTip($event)" />
+                        </div>
+                        <div class="wb-pay-confirm">
+                          <button class="wb-btn wb-btn--pay" [disabled]="!pendingMethod()" (click)="confirmPayment(order)">Confirmar</button>
+                          <button class="wb-btn" (click)="cancelPayment()">Cancelar</button>
+                        </div>
+                      </div>
+                    } @else {
+                      <button class="wb-btn wb-btn--pay" (click)="openPaymentPanel(order.id)">
+                        Marcar pagado
+                      </button>
+                    }
+
                     @for (status of waiterActions(order); track status) {
                       <button
                         class="wb-btn"

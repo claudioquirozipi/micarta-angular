@@ -11,8 +11,8 @@ import { OrderSseService } from '../../../orders/order-sse.service';
 import { PublicMenuService } from '../../../menu/public-menu.service';
 import { RoomsService } from '../../../rooms/rooms.service';
 import {
-  MemberAccess, Order, OrderStatus,
-  STATUS_COLOR, STATUS_LABEL,
+  MemberAccess, Order, OrderStatus, PaymentMethod,
+  PAYMENT_METHOD_LABEL, STATUS_COLOR, STATUS_LABEL,
 } from '../../../orders/order.model';
 
 import { PublicCategory } from '../../../menu/menu.model';
@@ -55,8 +55,14 @@ export class WaiterBoard implements OnInit, OnDestroy {
   readonly selectedTableName = signal<string>('');
   readonly addingToOrder     = signal<Order | null>(null);
 
-  readonly STATUS_LABEL = STATUS_LABEL;
-  readonly STATUS_COLOR = STATUS_COLOR;
+  readonly STATUS_LABEL         = STATUS_LABEL;
+  readonly STATUS_COLOR         = STATUS_COLOR;
+  readonly PAYMENT_METHOD_LABEL = PAYMENT_METHOD_LABEL;
+  readonly paymentMethods: PaymentMethod[] = ['CASH', 'YAPE', 'PLIN', 'CARD', 'OTHER'];
+
+  readonly payingOrderId = signal<string | null>(null);
+  readonly pendingMethod = signal<PaymentMethod | null>(null);
+  readonly pendingTip    = signal<number>(0);
 
   readonly activeOrders = computed(() =>
     this.orders().filter(o => !['FINISHED', 'CANCELLED'].includes(o.status)),
@@ -281,11 +287,39 @@ export class WaiterBoard implements OnInit, OnDestroy {
     });
   }
 
-  togglePayment(order: Order) {
+  openPaymentPanel(orderId: string) {
+    this.payingOrderId.set(orderId);
+    this.pendingMethod.set(null);
+    this.pendingTip.set(0);
+  }
+
+  cancelPayment() { this.payingOrderId.set(null); }
+
+  selectMethod(method: PaymentMethod) { this.pendingMethod.set(method); }
+
+  setTip(e: Event) {
+    const val = +(e.target as HTMLInputElement).value;
+    this.pendingTip.set(isNaN(val) ? 0 : Math.max(0, val));
+  }
+
+  confirmPayment(order: Order) {
+    const access  = this.access();
+    const method  = this.pendingMethod();
+    if (!access || !method) return;
+    const tip = this.pendingTip() > 0 ? this.pendingTip() : undefined;
+    this.orderSvc.updatePayment(access.id, order.id, true, method, tip).subscribe(updated => {
+      this.orders.update(os => os.map(o => o.id === updated.id ? updated : o));
+      if (updated.tableId) this.syncTableOrder(updated);
+      this.payingOrderId.set(null);
+    });
+  }
+
+  unpayOrder(order: Order) {
     const access = this.access();
     if (!access) return;
-    this.orderSvc.updatePayment(access.id, order.id, !order.isPaid).subscribe(updated => {
+    this.orderSvc.updatePayment(access.id, order.id, false).subscribe(updated => {
       this.orders.update(os => os.map(o => o.id === updated.id ? updated : o));
+      if (updated.tableId) this.syncTableOrder(updated);
     });
   }
 

@@ -1,0 +1,134 @@
+<div class="dr-page">
+  <div class="dr-header">
+    <h1 class="dr-header__title">Reportes</h1>
+  </div>
+
+  <!-- Filtro de fechas -->
+  <div class="dr-filters">
+    <div class="dr-filters__field">
+      <label class="dr-filters__label">Desde</label>
+      <input class="dr-filters__input" type="date" [value]="from()" (change)="setFrom($event)" />
+    </div>
+    <div class="dr-filters__field">
+      <label class="dr-filters__label">Hasta</label>
+      <input class="dr-filters__input" type="date" [value]="to()" (change)="setTo($event)" />
+    </div>
+    <button class="dr-btn" (click)="load()" [disabled]="loading()">
+      @if (loading()) {
+        <span class="material-symbols-outlined dr-spin">sync</span>
+      } @else {
+        <span class="material-symbols-outlined">search</span>
+      }
+      Ver reporte
+    </button>
+  </div>
+
+  @if (!summary() && !loading()) {
+    <div class="dr-empty">
+      <span class="material-symbols-outlined dr-empty__icon">assessment</span>
+      <p>Selecciona un período y presiona "Ver reporte".</p>
+    </div>
+  }
+
+  @if (summary(); as s) {
+    <!-- Cards de métricas -->
+    <div class="dr-cards">
+      <div class="dr-card">
+        <span class="dr-card__icon material-symbols-outlined">payments</span>
+        <div class="dr-card__body">
+          <p class="dr-card__label">Total ventas</p>
+          <p class="dr-card__value">S/ {{ s.totalSales.toFixed(2) }}</p>
+        </div>
+      </div>
+      <div class="dr-card">
+        <span class="dr-card__icon material-symbols-outlined">receipt_long</span>
+        <div class="dr-card__body">
+          <p class="dr-card__label">Total órdenes</p>
+          <p class="dr-card__value">{{ s.totalOrders }}</p>
+        </div>
+      </div>
+      <div class="dr-card">
+        <span class="dr-card__icon material-symbols-outlined">trending_up</span>
+        <div class="dr-card__body">
+          <p class="dr-card__label">Ticket promedio</p>
+          <p class="dr-card__value">S/ {{ s.averageTicket.toFixed(2) }}</p>
+        </div>
+      </div>
+      <div class="dr-card">
+        <span class="dr-card__icon material-symbols-outlined">cancel</span>
+        <div class="dr-card__body">
+          <p class="dr-card__label">Canceladas</p>
+          <p class="dr-card__value">{{ s.cancelledOrders }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Platos -->
+    <div class="dr-dishes">
+      <!-- Top 5 más vendidos -->
+      <div class="dr-dish-list">
+        <h2 class="dr-dish-list__title">
+          <span class="material-symbols-outlined">star</span> Top 5 más vendidos
+        </h2>
+        @if (!s.topDishes.length) {
+          <p class="dr-dish-list__empty">Sin datos en este período.</p>
+        } @else {
+          <ol class="dr-dish-list__items">
+            @for (d of s.topDishes; track d.dishName) {
+              <li class="dr-dish-item">
+                <span class="dr-dish-item__name">{{ d.dishName }}</span>
+                <span class="dr-dish-item__qty">{{ d.quantity }} uds.</span>
+              </li>
+            }
+          </ol>
+        }
+      </div>
+
+      <!-- Top 5 menos vendidos -->
+      <div class="dr-dish-list">
+        <h2 class="dr-dish-list__title">
+          <span class="material-symbols-outlined">warning</span> 5 menos vendidos
+        </h2>
+        @if (!s.bottomDishes.length) {
+          <p class="dr-dish-list__empty">Sin datos en este período.</p>
+        } @else {
+          <ol class="dr-dish-list__items">
+            @for (d of s.bottomDishes; track d.dishName) {
+              <li class="dr-dish-item">
+                <span class="dr-dish-item__name">{{ d.dishName }}</span>
+                <span class="dr-dish-item__qty">{{ d.quantity }} uds.</span>
+              </li>
+            }
+          </ol>
+        }
+      </div>
+    </div>
+
+    <!-- Ventas por mesero -->
+    @if (s.salesByWaiter.length) {
+      <div class="dr-waiter">
+        <h2 class="dr-waiter__title">
+          <span class="material-symbols-outlined">group</span> Ventas por mesero
+        </h2>
+        <table class="dr-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Órdenes</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (w of s.salesByWaiter; track w.userId) {
+              <tr>
+                <td>{{ w.userName }}</td>
+                <td>{{ w.orderCount }}</td>
+                <td>S/ {{ w.totalSales.toFixed(2) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</div>

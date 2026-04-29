@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Order, CreateOrderDto, AddOrderItemsDto, MemberAccess, OrderStatus } from './order.model';
+import { Order, CreateOrderDto, AddOrderItemsDto, MemberAccess, OrderStatus, PaymentMethod } from './order.model';
 
 const API = `${environment.apiUrl}/restaurants`;
 
@@ -34,10 +34,10 @@ export class OrderService {
     );
   }
 
-  updatePayment(restaurantId: string, orderId: string, isPaid: boolean) {
+  updatePayment(restaurantId: string, orderId: string, isPaid: boolean, paymentMethod?: PaymentMethod, tip?: number) {
     return this.http.patch<Order>(
       `${API}/${restaurantId}/orders/${orderId}/payment`,
-      { isPaid },
+      { isPaid, paymentMethod, tip },
     );
   }
 }

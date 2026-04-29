@@ -1,5 +1,14 @@
-export type OrderStatus = 'PENDING' | 'COOKING' | 'READY' | 'SERVED' | 'FINISHED' | 'CANCELLED';
-export type OrderType   = 'WHATSAPP' | 'TABLE';
+export type OrderStatus    = 'PENDING' | 'COOKING' | 'READY' | 'SERVED' | 'FINISHED' | 'CANCELLED';
+export type OrderType      = 'WHATSAPP' | 'TABLE';
+export type PaymentMethod  = 'CASH' | 'YAPE' | 'PLIN' | 'CARD' | 'OTHER';
+
+export const PAYMENT_METHOD_LABEL: Record<PaymentMethod, string> = {
+  CASH:  'Efectivo',
+  YAPE:  'Yape',
+  PLIN:  'Plin',
+  CARD:  'Tarjeta',
+  OTHER: 'Otro',
+};
 
 export interface OrderCreator {
   id:        string;
@@ -28,6 +37,8 @@ export interface Order {
   type:            OrderType;
   status:          OrderStatus;
   isPaid:          boolean;
+  paymentMethod:   PaymentMethod | null;
+  tip:             number | null;
   tableNumber:     string | null;
   tableId:         string | null;
   table:           TableRef | null;

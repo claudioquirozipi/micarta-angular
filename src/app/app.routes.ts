@@ -69,6 +69,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./dashboard/pages/subscription/dashboard-subscription').then(m => m.DashboardSubscription),
       },
+      {
+        path: 'reportes',
+        loadComponent: () =>
+          import('./dashboard/pages/reports/dashboard-reports').then(m => m.DashboardReports),
+      },
     ],
   },
   {

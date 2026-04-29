@@ -520,4 +520,74 @@
   &--on &__thumb { transform: translateX(1rem); }
 }
 
+// ── Payment panel ─────────────────────────────────────────
+.wb-pay-panel {
+  display: flex;
+  flex-direction: column;
+  gap: .625rem;
+  padding: .75rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: .75rem;
+  width: 100%;
+
+  &__label {
+    font-size: .8125rem;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+}
+
+.wb-pay-methods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .375rem;
+}
+
+.wb-pay-method {
+  padding: .375rem .75rem;
+  border-radius: .5rem;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  font-size: .8125rem;
+  font-weight: 500;
+  color: var(--color-muted);
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+
+  &:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+  &--selected {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
+  }
+}
+
+.wb-pay-tip {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+
+  &__label { font-size: .8125rem; color: var(--color-muted); white-space: nowrap; }
+
+  &__input {
+    width: 6rem;
+    padding: .3125rem .5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: .5rem;
+    font-size: .875rem;
+    color: var(--color-text);
+    background: #fff;
+    outline: none;
+
+    &:focus { border-color: var(--color-primary); }
+  }
+}
+
+.wb-pay-confirm {
+  display: flex;
+  gap: .5rem;
+}
+
 @keyframes spin { to { transform: rotate(360deg); } }
