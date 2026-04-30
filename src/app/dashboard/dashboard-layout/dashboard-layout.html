@@ -1,8 +1,13 @@
 <!-- ── Desktop sidebar ── -->
 <aside class="sidebar sidebar--desktop">
   <div class="sidebar__brand">
-    <a routerLink="/dashboard" class="brand">Mi<span>Carta</span></a>
-    <a routerLink="/dashboard/notificaciones" class="bell-btn" [class.bell-btn--active]="notificationsSvc.hasNotifications()" aria-label="Notificaciones">
+    <a routerLink="/dashboard" class="brand">MiCarta<span>App</span></a>
+    <a
+      routerLink="/dashboard/notificaciones"
+      class="bell-btn"
+      [class.bell-btn--active]="notificationsSvc.hasNotifications()"
+      aria-label="Notificaciones"
+    >
       <span class="material-symbols-outlined">notifications</span>
       @if (notificationsSvc.hasNotifications()) {
         <span class="bell-dot">{{ notificationsSvc.count() }}</span>
@@ -20,7 +25,11 @@
     @if (staffItems().length) {
       <p class="sidebar__section-label">Staff</p>
       @for (item of staffItems(); track item.path) {
-        <a [routerLink]="item.path" routerLinkActive="sidebar__link--active" class="sidebar__link sidebar__link--staff">
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="sidebar__link--active"
+          class="sidebar__link sidebar__link--staff"
+        >
           <span class="material-symbols-outlined sidebar__icon">{{ item.icon }}</span>
           {{ item.label }}
         </a>
@@ -39,14 +48,27 @@
 <!-- ── Mobile header ── -->
 <div class="mobile-header">
   <button class="mobile-header__burger" (click)="openDrawer()" aria-label="Abrir menú">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-      <line x1="3" y1="6" x2="21" y2="6"/>
-      <line x1="3" y1="12" x2="21" y2="12"/>
-      <line x1="3" y1="18" x2="21" y2="18"/>
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+    >
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <line x1="3" y1="12" x2="21" y2="12" />
+      <line x1="3" y1="18" x2="21" y2="18" />
     </svg>
   </button>
-  <a routerLink="/dashboard" class="brand">Mi<span>Carta</span></a>
-  <a routerLink="/dashboard/notificaciones" class="bell-btn bell-btn--mobile" [class.bell-btn--active]="notificationsSvc.hasNotifications()" aria-label="Notificaciones">
+  <a routerLink="/dashboard" class="brand">MiCarta<span>App</span></a>
+  <a
+    routerLink="/dashboard/notificaciones"
+    class="bell-btn bell-btn--mobile"
+    [class.bell-btn--active]="notificationsSvc.hasNotifications()"
+    aria-label="Notificaciones"
+  >
     <span class="material-symbols-outlined">notifications</span>
     @if (notificationsSvc.hasNotifications()) {
       <span class="bell-dot">{{ notificationsSvc.count() }}</span>
@@ -62,11 +84,19 @@
 <!-- ── Mobile drawer ── -->
 <aside class="sidebar sidebar--drawer" [class.sidebar--drawer-open]="drawerOpen()">
   <div class="sidebar__brand">
-    <a routerLink="/dashboard" class="brand" (click)="closeDrawer()">Mi<span>Carta</span></a>
+    <a routerLink="/dashboard" class="brand" (click)="closeDrawer()">MiCarta<span>App</span></a>
     <button class="sidebar__close" (click)="closeDrawer()" aria-label="Cerrar menú">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <line x1="18" y1="6" x2="6" y2="18"/>
-        <line x1="6" y1="6" x2="18" y2="18"/>
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      >
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
       </svg>
     </button>
   </div>
