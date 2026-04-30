@@ -198,6 +198,49 @@
   .material-symbols-outlined { font-size: 1rem; color: #16a34a; }
 }
 
+// ── WhatsApp contact ──────────────────────────────────────
+.sub-whatsapp {
+  display: flex;
+  flex-direction: column;
+  gap: .875rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: .875rem;
+  padding: 1rem;
+
+  &__info {
+    display: flex;
+    gap: .625rem;
+    align-items: flex-start;
+    font-size: .9rem;
+    color: #166534;
+    line-height: 1.5;
+
+    .material-symbols-outlined { font-size: 1.25rem; flex-shrink: 0; margin-top: .1rem; }
+  }
+}
+
+// ── Coming soon methods ───────────────────────────────────
+.sub-coming-soon-section {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+
+  &__label {
+    font-size: .75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: #9ca3af;
+  }
+}
+
+.sub-methods--disabled {
+  opacity: .3;
+  pointer-events: none;
+  user-select: none;
+}
+
 // ── Buttons ───────────────────────────────────────────────
 .sub-btn {
   display: inline-flex;
@@ -231,5 +274,13 @@
     color: var(--color-muted);
     border: 1px solid #e5e7eb;
     &:hover { background: #f9fafb; }
+  }
+
+  &--whatsapp {
+    background: #16a34a;
+    color: #fff;
+    text-decoration: none;
+    width: fit-content;
+    &:hover { background: #15803d; }
   }
 }

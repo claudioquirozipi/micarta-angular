@@ -76,62 +76,38 @@
         <h2 class="sub-card__title">{{ s.subscribed ? 'Extender suscripción' : 'Activar suscripción' }}</h2>
         <p class="sub-price">S/ {{ s.monthlyPrice }} / mes</p>
 
-        <!-- Selector de método -->
-        <div class="sub-methods">
-          <button class="sub-method-btn" [class.sub-method-btn--active]="payMethod() === 'yape'" (click)="payMethod.set('yape')">
-            <span class="material-symbols-outlined">smartphone</span>
-            Yape
-          </button>
-          <button class="sub-method-btn" [class.sub-method-btn--active]="payMethod() === 'card'" (click)="payMethod.set('card')">
-            <span class="material-symbols-outlined">credit_card</span>
-            Tarjeta
-          </button>
+        <!-- Contacto por WhatsApp -->
+        <div class="sub-whatsapp">
+          <div class="sub-whatsapp__info">
+            <span class="material-symbols-outlined">build_circle</span>
+            <p>Estamos integrando los pagos automáticos. Por ahora activa tu plan escribiéndonos directamente.</p>
+          </div>
+          <a
+            class="sub-btn sub-btn--whatsapp"
+            href="https://wa.me/51932527358?text=Hola%2C%20quiero%20activar%20mi%20suscripci%C3%B3n%20de%20MiCartaApp%20por%201%20mes%20(S%2F%2050)"
+            target="_blank"
+            rel="noopener noreferrer">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+            Activar por WhatsApp
+          </a>
         </div>
 
-        <!-- Yape: elige meses -->
-        @if (payMethod() === 'yape') {
-          <div class="sub-months">
-            @for (m of monthOptions; track m) {
-              <button
-                class="sub-month-btn"
-                [class.sub-month-btn--active]="selectedMonths() === m"
-                (click)="selectedMonths.set(m)">
-                {{ m }} mes{{ m > 1 ? 'es' : '' }}
-              </button>
-            }
+        <!-- Métodos futuros -->
+        <div class="sub-coming-soon-section">
+          <p class="sub-coming-soon-section__label">Próximamente — pagos automáticos</p>
+          <div class="sub-methods sub-methods--disabled">
+            <div class="sub-method-btn">
+              <span class="material-symbols-outlined">smartphone</span>
+              Yape
+            </div>
+            <div class="sub-method-btn">
+              <span class="material-symbols-outlined">credit_card</span>
+              Tarjeta
+            </div>
           </div>
-
-          <div class="sub-total">
-            Total a pagar: <strong>S/ {{ total.toFixed(2) }}</strong>
-          </div>
-
-          <button class="sub-btn sub-btn--primary" (click)="requestYape()" [disabled]="requesting()">
-            <span class="material-symbols-outlined">smartphone</span>
-            {{ requesting() ? 'Generando...' : 'Pagar con Yape' }}
-          </button>
-        }
-
-        <!-- Tarjeta: cobro mensual automático -->
-        @if (payMethod() === 'card') {
-          <p class="sub-card-info">
-            Se te cobrará <strong>S/ {{ s.monthlyPrice.toFixed(2) }}</strong> mensualmente de forma automática.
-            Puedes cancelar cuando quieras.
-          </p>
-
-          @if (cardError()) {
-            <p class="sub-error">{{ cardError() }}</p>
-          }
-
-          <button class="sub-btn sub-btn--primary" (click)="subscribeWithCard()" [disabled]="cardLoading()">
-            <span class="material-symbols-outlined">credit_card</span>
-            {{ cardLoading() ? 'Procesando...' : 'Pagar con tarjeta' }}
-          </button>
-
-          <p class="sub-secure">
-            <span class="material-symbols-outlined">lock</span>
-            Pago seguro procesado por Culqi. No guardamos tus datos de tarjeta.
-          </p>
-        }
+        </div>
       </div>
     }
   }
