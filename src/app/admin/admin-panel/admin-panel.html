@@ -30,9 +30,9 @@
 
           <p class="ap-card__date">
             @if (r.subscribed) {
-              Vence el {{ r.currentPeriodEnd | date:'d MMM yyyy' }}
+              Vence el {{ r.currentPeriodEnd | date:'d MMM yyyy' : 'UTC' }}
             } @else if (r.currentPeriodEnd) {
-              Venció el {{ r.currentPeriodEnd | date:'d MMM yyyy' }}
+              Venció el {{ r.currentPeriodEnd | date:'d MMM yyyy' : 'UTC' }}
             } @else {
               Sin suscripción registrada
             }
