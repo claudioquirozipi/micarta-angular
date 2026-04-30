@@ -5,6 +5,8 @@ import { environment } from '../../environments/environment';
 export interface RestaurantSubscription {
   restaurantId:       string;
   restaurantName:     string;
+  restaurantSlug:     string;
+  restaurantLogo:     string | null;
   ownerName:          string | null;
   ownerEmail:         string;
   subscriptionStatus: 'ACTIVE' | 'EXPIRED' | 'CANCELLED' | null;

@@ -1,12 +1,12 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../auth/services/auth.service';
 import { AdminService, RestaurantSubscription } from '../admin.service';
 
 @Component({
   selector: 'app-admin-panel',
-  imports: [DatePipe],
+  imports: [DatePipe, RouterLink],
   templateUrl: './admin-panel.html',
   styleUrl: './admin-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,9 +19,20 @@ export class AdminPanel implements OnInit {
   readonly today        = new Date().toISOString().substring(0, 10);
   readonly loading      = signal(true);
   readonly restaurants  = signal<RestaurantSubscription[]>([]);
+  readonly search       = signal('');
   readonly activatingId = signal<string | null>(null);
   readonly activatingDate = signal('');
   readonly saving       = signal(false);
+
+  readonly filtered = computed(() => {
+    const q = this.search().toLowerCase().trim();
+    if (!q) return this.restaurants();
+    return this.restaurants().filter(r =>
+      r.restaurantName.toLowerCase().includes(q) ||
+      r.ownerEmail.toLowerCase().includes(q) ||
+      (r.ownerName ?? '').toLowerCase().includes(q),
+    );
+  });
 
   ngOnInit() {
     this.load();

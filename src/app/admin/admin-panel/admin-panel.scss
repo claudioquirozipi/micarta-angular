@@ -13,6 +13,12 @@
   align-items: center;
   justify-content: space-between;
 
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+  }
+
   &__brand {
     display: flex;
     align-items: center;
@@ -38,6 +44,55 @@
     &:hover { color: #fff; background: rgba(255,255,255,.1); }
 
     .material-symbols-outlined { font-size: 1.25rem; }
+  }
+}
+
+.ap-back {
+  display: flex;
+  align-items: center;
+  color: rgba(255,255,255,.6);
+  padding: .375rem;
+  border-radius: .5rem;
+  transition: color .15s, background .15s;
+  text-decoration: none;
+
+  &:hover { color: #fff; background: rgba(255,255,255,.1); }
+
+  .material-symbols-outlined { font-size: 1.375rem; }
+}
+
+// ── Search ────────────────────────────────────────────────
+.ap-search-bar {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: .625rem 1.25rem;
+
+  &__icon { font-size: 1.25rem; color: #9ca3af; flex-shrink: 0; }
+
+  &__input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: .9375rem;
+    color: #111827;
+    background: transparent;
+
+    &::placeholder { color: #9ca3af; }
+  }
+
+  &__clear {
+    display: flex;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #9ca3af;
+    padding: .125rem;
+    border-radius: .375rem;
+    &:hover { color: #374151; }
+    .material-symbols-outlined { font-size: 1.125rem; }
   }
 }
 
@@ -80,8 +135,34 @@
   &__top {
     display: flex;
     align-items: flex-start;
-    justify-content: space-between;
     gap: .75rem;
+  }
+
+  &__logo {
+    flex-shrink: 0;
+    width: 3rem;
+    height: 3rem;
+    border-radius: .625rem;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: #9ca3af;
+
+    img { width: 100%; height: 100%; object-fit: cover; }
+    .material-symbols-outlined { font-size: 1.5rem; }
+  }
+
+  &__info { flex: 1; min-width: 0; }
+
+  &__right {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: .375rem;
   }
 
   &__name  { font-size: 1rem; font-weight: 700; color: #111827; }
@@ -92,6 +173,27 @@
     font-size: .875rem;
     color: #6b7280;
   }
+}
+
+.ap-menu-link {
+  display: flex;
+  align-items: center;
+  color: #6b7280;
+  text-decoration: none;
+  padding: .25rem;
+  border-radius: .375rem;
+  transition: color .15s, background .15s;
+
+  &:hover { color: var(--color-primary); background: #fff7ed; }
+
+  .material-symbols-outlined { font-size: 1.125rem; }
+}
+
+.ap-empty {
+  text-align: center;
+  color: #9ca3af;
+  font-size: .9375rem;
+  padding: 3rem 1rem;
 }
 
 // ── Status badges ─────────────────────────────────────────

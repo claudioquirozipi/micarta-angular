@@ -1,14 +1,35 @@
 <div class="ap-page">
 
   <header class="ap-header">
-    <div class="ap-header__brand">
-      <span class="material-symbols-outlined">admin_panel_settings</span>
-      <span>Panel Admin</span>
+    <div class="ap-header__left">
+      <a routerLink="/dashboard" class="ap-back" title="Volver al dashboard">
+        <span class="material-symbols-outlined">arrow_back</span>
+      </a>
+      <div class="ap-header__brand">
+        <span class="material-symbols-outlined">admin_panel_settings</span>
+        <span>Panel Admin</span>
+      </div>
     </div>
     <button class="ap-header__logout" (click)="logout()" title="Cerrar sesión">
       <span class="material-symbols-outlined">logout</span>
     </button>
   </header>
+
+  <div class="ap-search-bar">
+    <span class="material-symbols-outlined ap-search-bar__icon">search</span>
+    <input
+      class="ap-search-bar__input"
+      type="text"
+      placeholder="Buscar por empresa, correo o nombre..."
+      [value]="search()"
+      (input)="search.set($any($event.target).value)"
+    />
+    @if (search()) {
+      <button class="ap-search-bar__clear" (click)="search.set('')" title="Limpiar">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    }
+  </div>
 
   @if (loading()) {
     <div class="ap-loading">
@@ -16,16 +37,37 @@
       Cargando...
     </div>
   } @else {
+    @if (filtered().length === 0) {
+      <p class="ap-empty">No se encontraron resultados.</p>
+    }
     <div class="ap-list">
-      @for (r of restaurants(); track r.restaurantId) {
+      @for (r of filtered(); track r.restaurantId) {
         <div class="ap-card">
           <div class="ap-card__top">
+            <div class="ap-card__logo">
+              @if (r.restaurantLogo) {
+                <img [src]="r.restaurantLogo" [alt]="r.restaurantName" />
+              } @else {
+                <span class="material-symbols-outlined">store</span>
+              }
+            </div>
             <div class="ap-card__info">
               <p class="ap-card__name">{{ r.restaurantName }}</p>
               <p class="ap-card__owner">{{ r.ownerName ?? r.ownerEmail }}</p>
               <p class="ap-card__email">{{ r.ownerEmail }}</p>
             </div>
-            <span class="badge" [class]="statusClass(r)">{{ statusLabel(r) }}</span>
+            <div class="ap-card__right">
+              <span class="badge" [class]="statusClass(r)">{{ statusLabel(r) }}</span>
+              <a
+                [href]="'/r/' + r.restaurantSlug"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="ap-menu-link"
+                title="Ver menú"
+              >
+                <span class="material-symbols-outlined">open_in_new</span>
+              </a>
+            </div>
           </div>
 
           <p class="ap-card__date">
