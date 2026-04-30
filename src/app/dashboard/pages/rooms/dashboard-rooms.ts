@@ -2,6 +2,8 @@ import {
   ChangeDetectionStrategy, Component, OnInit,
   computed, inject, signal,
 } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { filter, switchMap, take } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { RestaurantService } from '../../../restaurant/services/restaurant.service';
 import { RoomsService } from '../../../rooms/rooms.service';
@@ -22,6 +24,8 @@ export class DashboardRooms implements OnInit {
   readonly rooms        = signal<Room[]>([]);
   readonly restaurantId = computed(() => this.restaurantSvc.restaurant()?.id ?? '');
 
+  private readonly restaurantId$ = toObservable(this.restaurantId);
+
   // New room form
   readonly newRoomName  = signal('');
   readonly addingRoom   = signal(false);
@@ -39,15 +43,13 @@ export class DashboardRooms implements OnInit {
   readonly editingTableName = signal('');
 
   ngOnInit() {
-    this.loadRooms();
-  }
-
-  private loadRooms() {
-    const rId = this.restaurantId();
-    if (!rId) return;
-    this.roomsSvc.list(rId).subscribe({
-      next: rooms => { this.rooms.set(rooms); this.loading.set(false); },
-      error: () => this.loading.set(false),
+    this.restaurantId$.pipe(
+      filter(id => !!id),
+      take(1),
+      switchMap(id => this.roomsSvc.list(id)),
+    ).subscribe({
+      next:  rooms => { this.rooms.set(rooms); this.loading.set(false); },
+      error: ()    => this.loading.set(false),
     });
   }
 
