@@ -21,29 +21,16 @@
           </div>
         </div>
 
-        @if (s.status === 'ACTIVE' && !showCancel()) {
-          <button class="sub-btn sub-btn--ghost" (click)="showCancel.set(true)">
-            Cancelar suscripción
-          </button>
-        }
-
-        @if (showCancel()) {
-          <div class="sub-cancel-box">
-            <p>¿Seguro que quieres cancelar? Seguirás teniendo acceso hasta el {{ s.currentPeriodEnd | date:'d MMM yyyy' : '' : 'es' }}.</p>
-            <div class="sub-cancel-box__actions">
-              <button class="sub-btn sub-btn--danger" (click)="cancelSubscription()" [disabled]="cancelling()">
-                {{ cancelling() ? 'Cancelando...' : 'Sí, cancelar' }}
-              </button>
-              <button class="sub-btn sub-btn--ghost" (click)="showCancel.set(false)">No, mantener</button>
-            </div>
-          </div>
-        }
       } @else {
         <div class="sub-status sub-status--expired">
           <span class="material-symbols-outlined">cancel</span>
           <div>
             <p class="sub-status__label">Sin suscripción activa</p>
-            <p class="sub-status__date">Activa tu plan para usar el sistema de órdenes.</p>
+            @if (s.currentPeriodEnd) {
+              <p class="sub-status__date">Venció el {{ s.currentPeriodEnd | date:'d MMM yyyy' : '' : 'es' }}</p>
+            } @else {
+              <p class="sub-status__date">Activa tu plan para usar el sistema de órdenes.</p>
+            }
           </div>
         </div>
       }

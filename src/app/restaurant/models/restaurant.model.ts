@@ -45,8 +45,10 @@ export interface Restaurant {
   whatsapp:    string | null;
   schedule:    string | null;
   isActive:    boolean;
-  hasMenu:     boolean;
-  myRole:      MemberRole | null;
+  hasMenu:               boolean;
+  myRole:                MemberRole | null;
+  subscriptionStatus:    'ACTIVE' | 'CANCELLED' | 'EXPIRED' | null;
+  subscriptionPeriodEnd: string | null;
   ownerId:     string;
   owner:       MemberUser;
   socialLinks: SocialLink[];

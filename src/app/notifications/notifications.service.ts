@@ -34,6 +34,24 @@ export class NotificationsService {
       });
     }
 
+    const periodEnd = restaurant.subscriptionPeriodEnd;
+    if (periodEnd) {
+      const daysLeft = (new Date(periodEnd).getTime() - Date.now()) / 86_400_000;
+      if (daysLeft <= 3 && daysLeft >= -3) {
+        const fecha = new Date(periodEnd).toLocaleDateString('es-PE', { day: 'numeric', month: 'long' });
+        const expired = daysLeft < 0;
+        list.push({
+          id:          'subscription-expiring',
+          title:       expired ? 'Suscripción vencida' : 'Suscripción por vencer',
+          message:     expired
+            ? `Tu suscripción venció el ${fecha}. Tienes ${3 + Math.ceil(daysLeft)} días de gracia para renovar.`
+            : `Tu suscripción vence el ${fecha}. Renueva para no perder el acceso.`,
+          actionLabel: 'Renovar',
+          actionPath:  '/dashboard/suscripcion',
+        });
+      }
+    }
+
     return list;
   });
 
