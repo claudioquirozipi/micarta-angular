@@ -57,7 +57,12 @@
   }
 }
 
-.sub-grace { font-size: .8125rem; color: #b45309; }
+.sub-grace {
+  font-size: .8125rem;
+  color: #b45309;
+  &--urgent { color: #dc2626; font-weight: 600; }
+  &--warn   { color: #92400e; }
+}
 
 // ── Cancel ────────────────────────────────────────────────
 .sub-cancel-box {

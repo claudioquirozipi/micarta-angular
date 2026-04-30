@@ -38,7 +38,7 @@ export class NotificationsService {
     if (periodEnd) {
       const daysLeft = (new Date(periodEnd).getTime() - Date.now()) / 86_400_000;
       if (daysLeft <= 3 && daysLeft >= -3) {
-        const fecha = new Date(periodEnd).toLocaleDateString('es-PE', { day: 'numeric', month: 'long' });
+        const fecha = new Date(periodEnd).toLocaleDateString('es-PE', { day: 'numeric', month: 'long', timeZone: 'UTC' });
         const expired = daysLeft < 0;
         list.push({
           id:          'subscription-expiring',

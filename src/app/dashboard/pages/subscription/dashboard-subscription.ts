@@ -52,6 +52,24 @@ export class DashboardSubscription implements OnInit {
     return s ? s.monthlyPrice * this.selectedMonths() : 0;
   }
 
+  get daysLeft(): number | null {
+    const end = this.status()?.currentPeriodEnd;
+    if (!end) return null;
+    return (new Date(end).getTime() - Date.now()) / 86_400_000;
+  }
+
+  get graceDaysLeft(): number {
+    const d = this.daysLeft;
+    if (d === null || d >= 0) return 3;
+    return Math.max(0, 3 + Math.ceil(d));
+  }
+
+  get expiringWarningDays(): number | null {
+    const d = this.daysLeft;
+    if (d === null || d < 0 || d > 3) return null;
+    return Math.ceil(d);
+  }
+
   requestYape() {
     if (this.requesting()) return;
     this.requesting.set(true);

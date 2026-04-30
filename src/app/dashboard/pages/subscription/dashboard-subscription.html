@@ -13,11 +13,32 @@
         <div class="sub-status sub-status--active">
           <span class="material-symbols-outlined">check_circle</span>
           <div>
-            <p class="sub-status__label">{{ s.isInGrace ? 'Período de gracia' : 'Activa' }}</p>
-            <p class="sub-status__date">
-              Vence el {{ s.currentPeriodEnd | date:'d MMM yyyy' : '' : 'es' }}
-              @if (s.isInGrace) { <span class="sub-grace">(quedan 3 días de gracia)</span> }
-            </p>
+            @if (s.isInGrace) {
+              <p class="sub-status__label">Período de gracia</p>
+              <p class="sub-status__date">
+                Venció el {{ s.currentPeriodEnd | date:'d MMM yyyy' : 'UTC' : 'es' }}
+                @if (graceDaysLeft === 1) {
+                  <span class="sub-grace sub-grace--urgent">¡Solo queda 1 día de gracia!</span>
+                } @else {
+                  <span class="sub-grace">Quedan {{ graceDaysLeft }} días de gracia</span>
+                }
+              </p>
+            } @else if (expiringWarningDays !== null) {
+              <p class="sub-status__label">Activa</p>
+              <p class="sub-status__date">
+                Vence el {{ s.currentPeriodEnd | date:'d MMM yyyy' : 'UTC' : 'es' }}
+                @if (expiringWarningDays <= 1) {
+                  <span class="sub-grace sub-grace--warn">¡Vence mañana! Renueva para no perder el acceso.</span>
+                } @else {
+                  <span class="sub-grace sub-grace--warn">Vence en {{ expiringWarningDays }} días. Renueva pronto.</span>
+                }
+              </p>
+            } @else {
+              <p class="sub-status__label">Activa</p>
+              <p class="sub-status__date">
+                Vence el {{ s.currentPeriodEnd | date:'d MMM yyyy' : 'UTC' : 'es' }}
+              </p>
+            }
           </div>
         </div>
 
@@ -27,7 +48,7 @@
           <div>
             <p class="sub-status__label">Sin suscripción activa</p>
             @if (s.currentPeriodEnd) {
-              <p class="sub-status__date">Venció el {{ s.currentPeriodEnd | date:'d MMM yyyy' : '' : 'es' }}</p>
+              <p class="sub-status__date">Venció el {{ s.currentPeriodEnd | date:'d MMM yyyy' : 'UTC' : 'es' }}</p>
             } @else {
               <p class="sub-status__date">Activa tu plan para usar el sistema de órdenes.</p>
             }
