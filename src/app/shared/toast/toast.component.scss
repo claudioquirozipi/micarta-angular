@@ -1,0 +1,66 @@
+.toast-container {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: .625rem;
+  width: min(22rem, calc(100vw - 2rem));
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .875rem 1rem;
+  background: #1f2937;
+  color: #f9fafb;
+  border-radius: .75rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,.3);
+  font-size: .9375rem;
+  line-height: 1.4;
+  pointer-events: auto;
+
+  &__message { flex: 1; }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: .375rem;
+    flex-shrink: 0;
+  }
+
+  &__action-btn {
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    padding: .375rem .75rem;
+    border-radius: .5rem;
+    font-size: .8125rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: background .15s;
+
+    &:hover { background: var(--color-primary-hover, #c2410c); }
+  }
+
+  &__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(255,255,255,.45);
+    padding: .25rem;
+    border-radius: .375rem;
+    transition: color .15s;
+
+    &:hover { color: #fff; }
+
+    .material-symbols-outlined { font-size: 1.125rem; }
+  }
+}

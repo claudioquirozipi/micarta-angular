@@ -1,0 +1,17 @@
+<div class="toast-container">
+  @for (toast of toastSvc.toasts(); track toast.id) {
+    <div class="toast">
+      <span class="toast__message">{{ toast.message }}</span>
+      <div class="toast__actions">
+        @if (toast.actionLabel) {
+          <button class="toast__action-btn" (click)="runAction(toast)">
+            {{ toast.actionLabel }}
+          </button>
+        }
+        <button class="toast__close" (click)="toastSvc.dismiss(toast.id)" aria-label="Cerrar">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+    </div>
+  }
+</div>
