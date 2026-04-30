@@ -11,13 +11,26 @@ export class NotificationsService {
 
     const list: AppNotification[] = [];
 
-    if (!this.restaurantSvc.restaurant()) {
+    const restaurant = this.restaurantSvc.restaurant();
+
+    if (!restaurant) {
       list.push({
         id:          'no-restaurant',
         title:       'Crea tu restaurante',
         message:     'Para acceder a todas las funciones primero debes crear el perfil de tu restaurante. Solo toma unos minutos.',
         actionLabel: 'Crear restaurante',
         actionPath:  '/dashboard/perfil',
+      });
+      return list;
+    }
+
+    if (!restaurant.hasMenu) {
+      list.push({
+        id:          'no-menu',
+        title:       'Agrega tu menú',
+        message:     'Ya tienes tu restaurante listo. El siguiente paso es crear tu menú con categorías y platos para poder tomar órdenes.',
+        actionLabel: 'Crear menú',
+        actionPath:  '/dashboard/menu',
       });
     }
 

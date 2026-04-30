@@ -11,14 +11,19 @@ const BASE_NAV: NavItem[] = [
   { path: '/dashboard/suscripcion', label: 'Suscripción', icon: 'credit_card' },
 ];
 
-const RESTAURANT_NAV: NavItem[] = [
-  { path: '/dashboard/menu',      label: 'Menú',         icon: 'restaurant'   },
-  { path: '/dashboard/salones',   label: 'Salones',      icon: 'meeting_room' },
-  { path: '/dashboard/ordenes',   label: 'Órdenes',      icon: 'receipt_long' },
-  { path: '/dashboard/equipo',    label: 'Equipo',       icon: 'group'        },
-  { path: '/dashboard/preview',   label: 'Vista previa', icon: 'visibility'   },
-  { path: '/dashboard/qr',        label: 'Mi QR',        icon: 'qr_code_2'   },
-  { path: '/dashboard/reportes',  label: 'Reportes',     icon: 'assessment'   },
+// Disponibles en cuanto hay restaurante (configuración, no requieren menú)
+const SETUP_NAV: NavItem[] = [
+  { path: '/dashboard/menu',    label: 'Menú',    icon: 'restaurant'   },
+  { path: '/dashboard/salones', label: 'Salones', icon: 'meeting_room' },
+  { path: '/dashboard/equipo',  label: 'Equipo',  icon: 'group'        },
+  { path: '/dashboard/qr',      label: 'Mi QR',   icon: 'qr_code_2'   },
+];
+
+// Requieren al menos un plato en el menú
+const OPERATIONAL_NAV: NavItem[] = [
+  { path: '/dashboard/preview',   label: 'Vista previa', icon: 'visibility'  },
+  { path: '/dashboard/ordenes',   label: 'Órdenes',      icon: 'receipt_long'},
+  { path: '/dashboard/reportes',  label: 'Reportes',     icon: 'assessment'  },
 ];
 
 @Component({
@@ -31,9 +36,12 @@ const RESTAURANT_NAV: NavItem[] = [
 export class DashboardLayout implements OnInit {
   readonly drawerOpen = signal(false);
 
-  readonly navItems = computed(() =>
-    this.restaurantService.restaurant() ? [...BASE_NAV, ...RESTAURANT_NAV] : BASE_NAV,
-  );
+  readonly navItems = computed(() => {
+    const r = this.restaurantService.restaurant();
+    if (!r) return BASE_NAV;
+    if (!r.hasMenu) return [...BASE_NAV, ...SETUP_NAV];
+    return [...BASE_NAV, ...SETUP_NAV, ...OPERATIONAL_NAV];
+  });
 
   readonly staffItems = computed(() => {
     const slug = this.restaurantService.restaurant()?.slug;
