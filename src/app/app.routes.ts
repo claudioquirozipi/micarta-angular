@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './auth/guards/auth.guard';
+import { adminGuard } from './auth/guards/admin.guard';
 
 export const routes: Routes = [
   {
@@ -100,6 +101,12 @@ export const routes: Routes = [
     path: 'r/:slug/cocina',
     loadComponent: () =>
       import('./public/pages/kitchen/kitchen-board').then(m => m.KitchenBoard),
+  },
+  {
+    path: 'admin',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./admin/admin-panel/admin-panel').then(m => m.AdminPanel),
   },
   {
     path: '**',

@@ -26,6 +26,8 @@ const OPERATIONAL_NAV: NavItem[] = [
   { path: '/dashboard/reportes',  label: 'Reportes',     icon: 'assessment'  },
 ];
 
+const ADMIN_EMAIL = 'claudioquirozipi@gmail.com';
+
 @Component({
   selector: 'app-dashboard-layout',
   imports: [RouterOutlet, RouterLink, RouterLinkActive],
@@ -35,6 +37,7 @@ const OPERATIONAL_NAV: NavItem[] = [
 })
 export class DashboardLayout implements OnInit {
   readonly drawerOpen = signal(false);
+  readonly isAdmin    = computed(() => this.auth.user()?.email === ADMIN_EMAIL);
 
   readonly navItems = computed(() => {
     const r = this.restaurantService.restaurant();

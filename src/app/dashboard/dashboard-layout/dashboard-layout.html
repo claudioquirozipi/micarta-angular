@@ -38,6 +38,12 @@
   </nav>
 
   <div class="sidebar__footer">
+    @if (isAdmin()) {
+      <a routerLink="/admin" class="sidebar__link sidebar__link--admin">
+        <span class="material-symbols-outlined sidebar__icon">admin_panel_settings</span>
+        Panel Admin
+      </a>
+    }
     <button class="sidebar__logout" (click)="logout()">
       <span class="material-symbols-outlined sidebar__icon">logout</span>
       Cerrar sesión
@@ -130,6 +136,12 @@
   </nav>
 
   <div class="sidebar__footer">
+    @if (isAdmin()) {
+      <a routerLink="/admin" class="sidebar__link sidebar__link--admin" (click)="closeDrawer()">
+        <span class="material-symbols-outlined sidebar__icon">admin_panel_settings</span>
+        Panel Admin
+      </a>
+    }
     <button class="sidebar__logout" (click)="logout()">
       <span class="material-symbols-outlined sidebar__icon">logout</span>
       Cerrar sesión

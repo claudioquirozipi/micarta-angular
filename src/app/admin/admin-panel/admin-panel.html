@@ -1,0 +1,71 @@
+<div class="ap-page">
+
+  <header class="ap-header">
+    <div class="ap-header__brand">
+      <span class="material-symbols-outlined">admin_panel_settings</span>
+      <span>Panel Admin</span>
+    </div>
+    <button class="ap-header__logout" (click)="logout()" title="Cerrar sesión">
+      <span class="material-symbols-outlined">logout</span>
+    </button>
+  </header>
+
+  @if (loading()) {
+    <div class="ap-loading">
+      <span class="material-symbols-outlined ap-spin">sync</span>
+      Cargando...
+    </div>
+  } @else {
+    <div class="ap-list">
+      @for (r of restaurants(); track r.restaurantId) {
+        <div class="ap-card">
+          <div class="ap-card__top">
+            <div class="ap-card__info">
+              <p class="ap-card__name">{{ r.restaurantName }}</p>
+              <p class="ap-card__owner">{{ r.ownerName ?? r.ownerEmail }}</p>
+              <p class="ap-card__email">{{ r.ownerEmail }}</p>
+            </div>
+            <span class="badge" [class]="statusClass(r)">{{ statusLabel(r) }}</span>
+          </div>
+
+          <p class="ap-card__date">
+            @if (r.subscribed) {
+              Vence el {{ r.currentPeriodEnd | date:'d MMM yyyy' }}
+            } @else if (r.currentPeriodEnd) {
+              Venció el {{ r.currentPeriodEnd | date:'d MMM yyyy' }}
+            } @else {
+              Sin suscripción registrada
+            }
+          </p>
+
+          @if (activatingId() === r.restaurantId) {
+            <div class="ap-activate">
+              <label class="ap-activate__label">Activar hasta:</label>
+              <input
+                class="ap-activate__input"
+                type="date"
+                [min]="today"
+                [value]="activatingDate()"
+                (change)="activatingDate.set($any($event.target).value)"
+              />
+              <div class="ap-activate__actions">
+                <button class="ap-btn ap-btn--primary" (click)="confirmActivate(r.restaurantId)" [disabled]="saving()">
+                  {{ saving() ? 'Guardando...' : 'Confirmar' }}
+                </button>
+                <button class="ap-btn ap-btn--ghost" (click)="cancelActivate()" [disabled]="saving()">
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          } @else {
+            <button class="ap-btn ap-btn--outline" (click)="openActivate(r.restaurantId)">
+              <span class="material-symbols-outlined">event</span>
+              {{ r.subscribed ? 'Extender' : 'Activar' }}
+            </button>
+          }
+        </div>
+      }
+    </div>
+  }
+
+</div>

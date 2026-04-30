@@ -1,0 +1,181 @@
+.ap-page {
+  min-height: 100vh;
+  background: #f3f4f6;
+  display: flex;
+  flex-direction: column;
+}
+
+// ── Header ────────────────────────────────────────────────
+.ap-header {
+  background: #111827;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: .625rem;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: #fff;
+
+    .material-symbols-outlined { font-size: 1.375rem; color: var(--color-primary); }
+  }
+
+  &__logout {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(255,255,255,.55);
+    padding: .375rem;
+    border-radius: .5rem;
+    transition: color .15s, background .15s;
+
+    &:hover { color: #fff; background: rgba(255,255,255,.1); }
+
+    .material-symbols-outlined { font-size: 1.25rem; }
+  }
+}
+
+// ── Loading ───────────────────────────────────────────────
+.ap-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: 4rem 1rem;
+  color: #6b7280;
+  font-size: .9375rem;
+}
+
+.ap-spin { animation: spin 1s linear infinite; font-size: 1.5rem; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ── List ──────────────────────────────────────────────────
+.ap-list {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  padding: 1.25rem 1rem 4rem;
+  max-width: 40rem;
+  width: 100%;
+  margin: 0 auto;
+}
+
+// ── Card ──────────────────────────────────────────────────
+.ap-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+  padding: 1.125rem;
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+
+  &__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: .75rem;
+  }
+
+  &__name  { font-size: 1rem; font-weight: 700; color: #111827; }
+  &__owner { font-size: .875rem; color: #374151; margin-top: .125rem; }
+  &__email { font-size: .8125rem; color: #9ca3af; }
+
+  &__date {
+    font-size: .875rem;
+    color: #6b7280;
+  }
+}
+
+// ── Status badges ─────────────────────────────────────────
+.badge {
+  flex-shrink: 0;
+  padding: .25rem .75rem;
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: 700;
+
+  &--active  { background: #dcfce7; color: #15803d; }
+  &--grace   { background: #fef9c3; color: #a16207; }
+  &--expired { background: #fee2e2; color: #dc2626; }
+  &--none    { background: #f3f4f6; color: #6b7280; }
+}
+
+// ── Activate inline ───────────────────────────────────────
+.ap-activate {
+  display: flex;
+  flex-direction: column;
+  gap: .625rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: .75rem;
+  padding: .875rem;
+
+  &__label {
+    font-size: .8125rem;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  &__input {
+    padding: .5rem .75rem;
+    border: 1px solid #d1d5db;
+    border-radius: .5rem;
+    font-size: .9375rem;
+    color: #111827;
+    width: 100%;
+
+    &:focus { outline: none; border-color: var(--color-primary); }
+  }
+
+  &__actions {
+    display: flex;
+    gap: .5rem;
+  }
+}
+
+// ── Buttons ───────────────────────────────────────────────
+.ap-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .375rem;
+  padding: .5rem .875rem;
+  border-radius: .625rem;
+  font-size: .875rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background .15s, color .15s;
+
+  &:disabled { opacity: .5; cursor: not-allowed; }
+
+  .material-symbols-outlined { font-size: 1.125rem; }
+
+  &--primary {
+    background: var(--color-primary);
+    color: #fff;
+    &:hover:not(:disabled) { background: var(--color-primary-hover, #c2410c); }
+  }
+
+  &--ghost {
+    background: transparent;
+    color: #6b7280;
+    border: 1px solid #e5e7eb;
+    &:hover:not(:disabled) { background: #f3f4f6; }
+  }
+
+  &--outline {
+    background: transparent;
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+    width: fit-content;
+    &:hover { background: #fff7ed; }
+  }
+}

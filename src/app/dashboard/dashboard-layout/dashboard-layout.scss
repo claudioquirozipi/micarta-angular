@@ -103,6 +103,12 @@ $mobile-header-height: 3.5rem;
     border-top: 1px solid rgba(255,255,255,0.08);
   }
 
+  &__link--admin {
+    color: var(--color-primary);
+    opacity: .85;
+    &:hover { opacity: 1; background: rgba(255,255,255,.08); }
+  }
+
   &__logout {
     display: flex;
     align-items: center;
