@@ -32,6 +32,24 @@
     display: flex;
     gap: .375rem;
   }
+
+  &__logout {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6b7280;
+    padding: .375rem;
+    border-radius: .5rem;
+    transition: background .15s, color .15s;
+
+    &:hover { background: #374151; color: #f9fafb; }
+
+    .material-symbols-outlined { font-size: 1.375rem; color: inherit; }
+  }
 }
 
 .kb-tab-btn {

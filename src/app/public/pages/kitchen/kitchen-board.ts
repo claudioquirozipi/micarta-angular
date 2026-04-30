@@ -121,4 +121,8 @@ export class KitchenBoard implements OnInit, OnDestroy {
       this.orders.update(os => os.filter(o => o.id !== updated.id));
     });
   }
+
+  logout() {
+    this.authSvc.logout();
+  }
 }

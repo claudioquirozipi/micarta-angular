@@ -46,6 +46,7 @@ export interface Restaurant {
   schedule:    string | null;
   isActive:    boolean;
   hasMenu:     boolean;
+  myRole:      MemberRole | null;
   ownerId:     string;
   owner:       MemberUser;
   socialLinks: SocialLink[];

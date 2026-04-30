@@ -60,12 +60,17 @@ export class DashboardLayout implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Carga el restaurante una sola vez al entrar al dashboard.
-    // Se usa loaded() como condición (no restaurant()) para cubrir el caso en que
-    // restaurant fue seteado por create/update pero loaded todavía es false.
     if (!this.restaurantService.loaded()) {
-      this.restaurantService.loadMine().subscribe();
+      this.restaurantService.loadMine().subscribe(() => this.redirectStaff());
+    } else {
+      this.redirectStaff();
     }
+  }
+
+  private redirectStaff() {
+    const r = this.restaurantService.restaurant();
+    if (r?.myRole === 'WAITER') this.router.navigate(['/r', r.slug, 'mesero']);
+    else if (r?.myRole === 'CHEF') this.router.navigate(['/r', r.slug, 'cocina']);
   }
 
   openDrawer()  { this.drawerOpen.set(true);  }

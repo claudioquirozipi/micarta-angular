@@ -331,4 +331,8 @@ export class WaiterBoard implements OnInit, OnDestroy {
     };
     return map[order.status] ?? [];
   }
+
+  logout() {
+    this.authSvc.logout();
+  }
 }
