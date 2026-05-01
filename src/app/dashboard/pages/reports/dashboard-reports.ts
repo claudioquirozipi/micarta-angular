@@ -21,7 +21,7 @@ export class DashboardReports implements OnInit {
   readonly loading    = signal(false);
   readonly summary    = signal<ReportSummary | null>(null);
   readonly from       = signal(this.firstDayOfMonth());
-  readonly to         = signal(this.today());
+  readonly to         = signal(this.todayEnd());
 
   ngOnInit() {
     if (this.restaurantSvc.loaded()) {
@@ -38,18 +38,29 @@ export class DashboardReports implements OnInit {
     const r = this.restaurant();
     if (!r) return;
     this.loading.set(true);
-    this.reportsSvc.getSummary(r.id, `${this.from()}T00:00:00.000Z`, `${this.to()}T23:59:59.999Z`).subscribe({
+    const from = new Date(this.from()).toISOString();
+    const to   = new Date(this.to()).toISOString();
+    this.reportsSvc.getSummary(r.id, from, to).subscribe({
       next:  s  => { this.summary.set(s); this.loading.set(false); },
       error: () => this.loading.set(false),
     });
   }
 
-  private today() {
-    return new Date().toISOString().slice(0, 10);
+  private todayEnd() {
+    const d = new Date();
+    d.setHours(23, 59, 0, 0);
+    return this.toLocalDatetimeInput(d);
   }
 
   private firstDayOfMonth() {
     const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-01`;
+    d.setDate(1);
+    d.setHours(0, 0, 0, 0);
+    return this.toLocalDatetimeInput(d);
+  }
+
+  private toLocalDatetimeInput(d: Date): string {
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
   }
 }
